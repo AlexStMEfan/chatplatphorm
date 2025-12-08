@@ -1,0 +1,59 @@
+@import "tailwindcss";
+
+
+@theme {
+  --color-primary: #00956F;
+  --color-primary-hover: #00B387;
+  --color-primary-lite: #E5F7F2;
+  --color-text-dark: #1F1F1F;
+  --color-text-light: #FFFFFF;
+  --color-text-muted: #6B6B6B;
+  --color-background: #F8F9FA;
+  --color-neutral: #E9ECEF;
+  --color-accent: #FFD369;
+  --color-danger: #D72638;
+  --color-success: #00A676;
+  --color-border: #E0E0E0;
+  --color-dark-background: #121212;
+  --color-dark-surface: #1C1C1C;
+  --color-dark-primary: #00B387;
+  --color-dark-primary-hover: #00C79A;
+  --color-dark-text-light: #FFFFFF;
+  --color-dark-text-muted: #A0A0A0;
+  --color-dark-border: #2A2A2A;
+  --color-dark-input: #1E1E1E;
+  --color-dark-success: #00C896;
+}
+
+:root {
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+
+
+body {
+  margin: 0;
+  display: flex;
+  place-items: center;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+}
+
+
+

@@ -1,0 +1,89 @@
+.markdown-body {
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--text-dark);
+}
+
+.dark .markdown-body {
+  color: var(--dark-text);
+}
+
+/* Заголовки */
+.markdown-body h1,
+.markdown-body h2,
+.markdown-body h3 {
+  font-weight: 600;
+  margin-top: 24px;
+  margin-bottom: 12px;
+}
+
+.markdown-body h1 {
+  font-size: 28px;
+}
+
+.markdown-body h2 {
+  font-size: 22px;
+}
+
+.markdown-body h3 {
+  font-size: 18px;
+}
+
+/* Цитаты */
+.markdown-body blockquote {
+  border-left: 4px solid #64CD84;
+  padding-left: 12px;
+  margin: 16px 0;
+  color: #666;
+}
+
+.dark .markdown-body blockquote {
+  color: #aaa;
+}
+
+/* Код */
+.markdown-body pre {
+  background: #f5f5f5;
+  padding: 16px;
+  border-radius: 12px;
+  overflow-x: auto;
+  margin: 16px 0;
+}
+
+.dark .markdown-body pre {
+  background: #1E1E1E;
+}
+
+.markdown-body code {
+  background: #eee;
+  padding: 2px 4px;
+  border-radius: 6px;
+}
+
+.dark .markdown-body code {
+  background: #2A2A2A;
+}
+
+/* Списки */
+.markdown-body ul,
+.markdown-body ol {
+  margin-left: 20px;
+  margin-top: 8px;
+  margin-bottom: 8px;
+}
+
+/* Таблицы */
+.markdown-body table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+}
+
+.markdown-body td, .markdown-body th {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+.dark .markdown-body td, .dark .markdown-body th {
+  border-color: #333;
+}

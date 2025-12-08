@@ -1,0 +1,18 @@
+DBG 78384: tput reports color support: true
+DBG 78384: Using color escape sequences from tput
+DBG 78384: Loading module builtin (required by base) from /Users/alexefanov/Desktop/Чат/backend-chat/chat_news/target/debug/build/rdkafka-sys-a8b4c8a2b218cc1e/out/mklove/modules/configure.builtin
+DBG 78384: Loading module host (required by base) from /Users/alexefanov/Desktop/Чат/backend-chat/chat_news/target/debug/build/rdkafka-sys-a8b4c8a2b218cc1e/out/mklove/modules/configure.host
+DBG 78384: Loading module cc (required by base) from /Users/alexefanov/Desktop/Чат/backend-chat/chat_news/target/debug/build/rdkafka-sys-a8b4c8a2b218cc1e/out/mklove/modules/configure.cc
+DBG 78384: Loading module self (required by base) from configure.self
+DBG 78384: Loading module cxx (required by self) from /Users/alexefanov/Desktop/Чат/backend-chat/chat_news/target/debug/build/rdkafka-sys-a8b4c8a2b218cc1e/out/mklove/modules/configure.cxx
+DBG 78384: Loading module lib (required by self) from /Users/alexefanov/Desktop/Чат/backend-chat/chat_news/target/debug/build/rdkafka-sys-a8b4c8a2b218cc1e/out/mklove/modules/configure.lib
+DBG 78384: Loading module pic (required by lib) from /Users/alexefanov/Desktop/Чат/backend-chat/chat_news/target/debug/build/rdkafka-sys-a8b4c8a2b218cc1e/out/mklove/modules/configure.pic
+DBG 78384: Loading module atomics (required by self) from /Users/alexefanov/Desktop/Чат/backend-chat/chat_news/target/debug/build/rdkafka-sys-a8b4c8a2b218cc1e/out/mklove/modules/configure.atomics
+DBG 78384: Loading module good_cflags (required by self) from /Users/alexefanov/Desktop/Чат/backend-chat/chat_news/target/debug/build/rdkafka-sys-a8b4c8a2b218cc1e/out/mklove/modules/configure.good_cflags
+DBG 78384: Loading module socket (required by self) from /Users/alexefanov/Desktop/Чат/backend-chat/chat_news/target/debug/build/rdkafka-sys-a8b4c8a2b218cc1e/out/mklove/modules/configure.socket
+DBG 78384: Loading module zlib (required by self) from /Users/alexefanov/Desktop/Чат/backend-chat/chat_news/target/debug/build/rdkafka-sys-a8b4c8a2b218cc1e/out/mklove/modules/configure.zlib
+DBG 78384: Loading module libzstd (required by self) from /Users/alexefanov/Desktop/Чат/backend-chat/chat_news/target/debug/build/rdkafka-sys-a8b4c8a2b218cc1e/out/mklove/modules/configure.libzstd
+DBG 78384: Loading module libssl (required by self) from /Users/alexefanov/Desktop/Чат/backend-chat/chat_news/target/debug/build/rdkafka-sys-a8b4c8a2b218cc1e/out/mklove/modules/configure.libssl
+DBG 78384: Loading module libsasl2 (required by self) from /Users/alexefanov/Desktop/Чат/backend-chat/chat_news/target/debug/build/rdkafka-sys-a8b4c8a2b218cc1e/out/mklove/modules/configure.libsasl2
+DBG 78384: Loading module libcurl (required by self) from /Users/alexefanov/Desktop/Чат/backend-chat/chat_news/target/debug/build/rdkafka-sys-a8b4c8a2b218cc1e/out/mklove/modules/configure.libcurl
+DBG 78384: Loading module parseversion (required by self) from /Users/alexefanov/Desktop/Чат/backend-chat/chat_news/target/debug/build/rdkafka-sys-a8b4c8a2b218cc1e/out/mklove/modules/configure.parseversion

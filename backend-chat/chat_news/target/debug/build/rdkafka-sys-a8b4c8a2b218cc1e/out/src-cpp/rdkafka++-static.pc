@@ -1,0 +1,10 @@
+prefix=/usr/local
+libdir=/usr/local/lib
+includedir=/usr/local/include
+
+Name: librdkafka++-static
+Description: The Apache Kafka C/C++ library (static)
+Version: 2.10.0
+Requires: rdkafka-static
+Cflags: -I${includedir}
+Libs: -L${libdir} ${pc_sysrootdir}${libdir}/librdkafka++.a -lm -lz -ldl -lpthread
