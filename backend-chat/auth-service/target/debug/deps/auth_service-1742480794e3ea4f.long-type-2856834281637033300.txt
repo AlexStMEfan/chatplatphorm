@@ -1,0 +1,2 @@
+fn(State<Pool<Postgres>>, {type error}, axum::Json<LoginRequest>) -> impl std::future::Future<Output = impl IntoResponse> {login}
+fn(State<Pool<Postgres>>, {type error}, axum::Json<LoginRequest>) -> impl std::future::Future<Output = impl IntoResponse> {login}: Handler<_, _>

@@ -1,0 +1,12 @@
+/Users/alexefanov/Desktop/Чат/backend-chat/auth-service/target/debug/deps/serde-1aea73dea8fecc91.d: /Users/alexefanov/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/lib.rs /Users/alexefanov/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/integer128.rs /Users/alexefanov/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/mod.rs /Users/alexefanov/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/de.rs /Users/alexefanov/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/ser.rs /Users/alexefanov/Desktop/Чат/backend-chat/auth-service/target/debug/build/serde-2d9dd63d7dda05de/out/private.rs
+
+/Users/alexefanov/Desktop/Чат/backend-chat/auth-service/target/debug/deps/libserde-1aea73dea8fecc91.rmeta: /Users/alexefanov/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/lib.rs /Users/alexefanov/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/integer128.rs /Users/alexefanov/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/mod.rs /Users/alexefanov/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/de.rs /Users/alexefanov/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/ser.rs /Users/alexefanov/Desktop/Чат/backend-chat/auth-service/target/debug/build/serde-2d9dd63d7dda05de/out/private.rs
+
+/Users/alexefanov/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/lib.rs:
+/Users/alexefanov/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/integer128.rs:
+/Users/alexefanov/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/mod.rs:
+/Users/alexefanov/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/de.rs:
+/Users/alexefanov/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.228/src/private/ser.rs:
+/Users/alexefanov/Desktop/Чат/backend-chat/auth-service/target/debug/build/serde-2d9dd63d7dda05de/out/private.rs:
+
+# env-dep:OUT_DIR=/Users/alexefanov/Desktop/Чат/backend-chat/auth-service/target/debug/build/serde-2d9dd63d7dda05de/out

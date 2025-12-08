@@ -1,0 +1,14 @@
+/Users/alexefanov/Desktop/Чат/backend-chat/auth-service/target/debug/deps/thiserror-1c9a3f5e2d36e052.d: /Users/alexefanov/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/lib.rs /Users/alexefanov/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/aserror.rs /Users/alexefanov/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/display.rs /Users/alexefanov/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/var.rs /Users/alexefanov/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/private.rs /Users/alexefanov/Desktop/Чат/backend-chat/auth-service/target/debug/build/thiserror-c1175b1726b1587e/out/private.rs
+
+/Users/alexefanov/Desktop/Чат/backend-chat/auth-service/target/debug/deps/libthiserror-1c9a3f5e2d36e052.rlib: /Users/alexefanov/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/lib.rs /Users/alexefanov/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/aserror.rs /Users/alexefanov/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/display.rs /Users/alexefanov/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/var.rs /Users/alexefanov/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/private.rs /Users/alexefanov/Desktop/Чат/backend-chat/auth-service/target/debug/build/thiserror-c1175b1726b1587e/out/private.rs
+
+/Users/alexefanov/Desktop/Чат/backend-chat/auth-service/target/debug/deps/libthiserror-1c9a3f5e2d36e052.rmeta: /Users/alexefanov/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/lib.rs /Users/alexefanov/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/aserror.rs /Users/alexefanov/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/display.rs /Users/alexefanov/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/var.rs /Users/alexefanov/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/private.rs /Users/alexefanov/Desktop/Чат/backend-chat/auth-service/target/debug/build/thiserror-c1175b1726b1587e/out/private.rs
+
+/Users/alexefanov/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/lib.rs:
+/Users/alexefanov/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/aserror.rs:
+/Users/alexefanov/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/display.rs:
+/Users/alexefanov/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/var.rs:
+/Users/alexefanov/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/thiserror-2.0.17/src/private.rs:
+/Users/alexefanov/Desktop/Чат/backend-chat/auth-service/target/debug/build/thiserror-c1175b1726b1587e/out/private.rs:
+
+# env-dep:OUT_DIR=/Users/alexefanov/Desktop/Чат/backend-chat/auth-service/target/debug/build/thiserror-c1175b1726b1587e/out

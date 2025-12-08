@@ -1,0 +1,10 @@
+/Users/alexefanov/Desktop/Чат/backend-chat/chat_news/target/debug/deps/scylla_macros-a9c6dae1079bfe21.d: /Users/alexefanov/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/scylla-macros-0.2.3/src/lib.rs /Users/alexefanov/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/scylla-macros-0.2.3/src/from_row.rs /Users/alexefanov/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/scylla-macros-0.2.3/src/from_user_type.rs /Users/alexefanov/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/scylla-macros-0.2.3/src/into_user_type.rs /Users/alexefanov/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/scylla-macros-0.2.3/src/parser.rs /Users/alexefanov/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/scylla-macros-0.2.3/src/value_list.rs
+
+/Users/alexefanov/Desktop/Чат/backend-chat/chat_news/target/debug/deps/libscylla_macros-a9c6dae1079bfe21.dylib: /Users/alexefanov/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/scylla-macros-0.2.3/src/lib.rs /Users/alexefanov/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/scylla-macros-0.2.3/src/from_row.rs /Users/alexefanov/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/scylla-macros-0.2.3/src/from_user_type.rs /Users/alexefanov/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/scylla-macros-0.2.3/src/into_user_type.rs /Users/alexefanov/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/scylla-macros-0.2.3/src/parser.rs /Users/alexefanov/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/scylla-macros-0.2.3/src/value_list.rs
+
+/Users/alexefanov/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/scylla-macros-0.2.3/src/lib.rs:
+/Users/alexefanov/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/scylla-macros-0.2.3/src/from_row.rs:
+/Users/alexefanov/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/scylla-macros-0.2.3/src/from_user_type.rs:
+/Users/alexefanov/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/scylla-macros-0.2.3/src/into_user_type.rs:
+/Users/alexefanov/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/scylla-macros-0.2.3/src/parser.rs:
+/Users/alexefanov/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/scylla-macros-0.2.3/src/value_list.rs:
