@@ -13,12 +13,7 @@ import {
 } from "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBal4-zGj8Z24nlv0DwhsQ7rJICqEeXSMk",
-  authDomain: "test-7fc88.firebaseapp.com",
-  projectId: "test-7fc88",
-  storageBucket: "test-7fc88.firebasestorage.app",
-  messagingSenderId: "1048129977962",
-  appId: "1:1048129977962:web:44c769b50faf305ea71413"
+  
 };
 
 // --- Инициализация ---
