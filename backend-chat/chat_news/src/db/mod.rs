@@ -1,5 +1,6 @@
 use scylla::Session;
 use std::sync::Arc;
+use anyhow::Context;
 
 pub mod messages;
 
@@ -9,15 +10,23 @@ pub struct Db {
 }
 
 impl Db {
-    pub async fn connect(hosts: &[String]) -> Result<Self, scylla::Error> {
-        let uri = hosts.join(",");
-        let session = Session::connect(&uri).await?;
+    pub async fn connect(hosts: &[String]) -> anyhow::Result<Self> {
+        // Используем SessionBuilder
+        let session = scylla::SessionBuilder::new()
+            .known_nodes(hosts.to_vec())
+            .build()
+            .await
+            .context("connect to scylla")?;
+
+        // Создаём keyspace и таблицу
         session
             .query(
-                "CREATE KEYSPACE IF NOT EXISTS chat WITH replication = {'class': 'SimpleStrategy', 'replication_factor': 1}",
+                "CREATE KEYSPACE IF NOT EXISTS chat \
+                 WITH replication = {'class': 'SimpleStrategy', 'replication_factor': 1}",
                 &[],
             )
             .await?;
+
         session
             .query(
                 "CREATE TABLE IF NOT EXISTS chat.messages (
@@ -31,6 +40,7 @@ impl Db {
                 &[],
             )
             .await?;
+
         Ok(Self {
             session: Arc::new(session),
         })

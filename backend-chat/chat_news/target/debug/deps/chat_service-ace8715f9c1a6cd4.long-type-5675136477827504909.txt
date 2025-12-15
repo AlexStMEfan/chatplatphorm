@@ -1,0 +1,2 @@
+axum::middleware::FromFn<fn(axum::http::Request<_>, Next, Extension<Arc<AuthState>>) -> impl std::future::Future<Output = impl IntoResponse> {sliding_session::<_>}, Arc<AuthState>, Route, _>
+axum::middleware::FromFn<fn(axum::http::Request<_>, Next, Extension<Arc<AuthState>>) -> impl std::future::Future<Output = impl IntoResponse> {sliding_session::<_>}, Arc<AuthState>, Route, _>: tower::Service<axum::http::Request<Body>>

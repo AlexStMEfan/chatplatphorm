@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: chat-service
+  namespace: chat
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: chat-service
+  template:
+    metadata:
+      labels:
+        app: chat-service
+    spec:
+      containers:
+        - name: chat-service
+          image: registry.example.com/chat-service:latest
+          ports:
+            - containerPort: 9000
+          env:
+            - name: SCYLLA_NODES
+              value: scylla.example.com
+            - name: KAFKA_BROKERS
+              value: kafka.example.com:9092
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: chat-service
+  namespace: chat
+spec:
+  selector:
+    app: chat-service
+  ports:
+    - port: 9000

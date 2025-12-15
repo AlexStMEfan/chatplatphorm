@@ -1,48 +1,47 @@
-Cloning librdkafka
 Configuring librdkafka
-checking for OS or distribution... [32mok(B[m (osx)
-checking for C compiler from CC env... [33mfailed(B[m
-checking for gcc (by command)... [32mok(B[m
-checking for C++ compiler from CXX env... [33mfailed(B[m
-checking for C++ compiler (g++)... [32mok(B[m
-checking executable ld... [32mok(B[m
-checking executable nm... [32mok(B[m
-checking executable objdump... [32mok(B[m
-checking executable strip... [32mok(B[m
-checking executable libtool... [32mok(B[m
-checking executable ranlib... [32mok(B[m
-checking for debug symbols compiler flag (-g...)... [32mok(B[m
-checking for pkgconfig (by command)... [33mfailed(B[m
-checking for install (by command)... [33mfailed(B[m
-checking for GNU ar... [33mfailed(B[m (disable)
-checking for PIC (by compile)... [32mok(B[m
-checking for GNU-compatible linker options... [33mfailed(B[m
-checking for OSX linker options... [32mok(B[m
-checking for GNU linker-script ld flag... [33mfailed(B[m
-checking for Solaris linker-script ld flag... [33mfailed(B[m (ignore)
-checking for __atomic_32 (by compile)... [32mok(B[m
-checking for __atomic_64 (by compile)... [32mok(B[m
-checking for socket (by compile)... [32mok(B[m
-parsing version '0x020a00ff'... [32mok(B[m (2.10.0)
-checking for librt (by compile)... [33mfailed(B[m
-checking for libpthread (by compile)... [32mok(B[m
-checking for c11threads (by compile)... [33mfailed(B[m (disable)
-checking for libdl (by compile)... [32mok(B[m
-checking for zlib (by compile)... [32mok(B[m
-checking for libm (by compile)... [32mok(B[m
-checking for syslog (by compile)... [32mok(B[m
-checking for rapidjson (by compile)... [33mfailed(B[m (disable)
-checking for crc32chw (by compile)... [33mfailed(B[m (disable)
-checking for regex (by compile)... [32mok(B[m
-checking for rand_r (by compile)... [32mok(B[m
-checking for strndup (by compile)... [32mok(B[m
-checking for strlcpy (by compile)... [32mok(B[m
-checking for strerror_r (by compile)... [32mok(B[m
-checking for strcasestr (by compile)... [32mok(B[m
-checking for pthread_setname_gnu (by compile)... [33mfailed(B[m (disable)
-checking for pthread_setname_darwin (by compile)... [32mok(B[m
-checking for nm (by env NM)... [32mok(B[m (cached)
-checking for getrusage (by compile)... [32mok(B[m
+checking for OS or distribution... ok (osx)
+checking for C compiler from CC env... failed
+checking for gcc (by command)... ok
+checking for C++ compiler from CXX env... failed
+checking for C++ compiler (g++)... ok
+checking executable ld... ok
+checking executable nm... ok
+checking executable objdump... ok
+checking executable strip... ok
+checking executable libtool... ok
+checking executable ranlib... ok
+checking for debug symbols compiler flag (-g...)... ok
+checking for pkgconfig (by command)... failed
+checking for install (by command)... failed
+checking for GNU ar... failed (disable)
+checking for PIC (by compile)... ok
+checking for GNU-compatible linker options... failed
+checking for OSX linker options... ok
+checking for GNU linker-script ld flag... failed
+checking for Solaris linker-script ld flag... failed (ignore)
+checking for __atomic_32 (by compile)... ok
+checking for __atomic_64 (by compile)... ok
+checking for socket (by compile)... ok
+parsing version '0x020a00ff'... ok (2.10.0)
+checking for librt (by compile)... failed
+checking for libpthread (by compile)... ok
+checking for c11threads (by compile)... failed (disable)
+checking for libdl (by compile)... ok
+checking for zlib (by compile)... ok
+checking for libm (by compile)... ok
+checking for syslog (by compile)... ok
+checking for rapidjson (by compile)... failed (disable)
+checking for crc32chw (by compile)... failed (disable)
+checking for regex (by compile)... ok
+checking for rand_r (by compile)... ok
+checking for strndup (by compile)... ok
+checking for strlcpy (by compile)... ok
+checking for strerror_r (by compile)... ok
+checking for strcasestr (by compile)... ok
+checking for pthread_setname_gnu (by compile)... failed (disable)
+checking for pthread_setname_darwin (by compile)... ok
+checking for nm (by env NM)... ok (cached)
+checking for getrusage (by compile)... ok
 Generated Makefile.config
 Generated config.h
 
@@ -175,25 +174,25 @@ gcc -MD -MP -gstrict-dwarf -O2 -fPIC -Wall -Wsign-compare -Wfloat-equal -Wpointe
 gcc -MD -MP -gstrict-dwarf -O2 -fPIC -Wall -Wsign-compare -Wfloat-equal -Wpointer-arith -Wcast-align -I.  -O3 -c lz4hc.c -o lz4hc.o
 gcc -MD -MP -gstrict-dwarf -O2 -fPIC -Wall -Wsign-compare -Wfloat-equal -Wpointer-arith -Wcast-align -I.  -c rddl.c -o rddl.o
 gcc -MD -MP -gstrict-dwarf -O2 -fPIC -Wall -Wsign-compare -Wfloat-equal -Wpointer-arith -Wcast-align -I.  -c rdkafka_plugin.c -o rdkafka_plugin.o
-[33mGenerating pkg-config file rdkafka.pc(B[m
-[33mCreating shared library librdkafka.1.dylib(B[m
+Generating pkg-config file rdkafka.pc
+Creating shared library librdkafka.1.dylib
 gcc  -shared -dynamiclib -Wl,-install_name,/usr/local/lib/librdkafka.1.dylib rdkafka.o rdkafka_broker.o rdkafka_msg.o rdkafka_topic.o rdkafka_conf.o rdkafka_timer.o rdkafka_offset.o rdkafka_transport.o rdkafka_buf.o rdkafka_queue.o rdkafka_op.o rdkafka_request.o rdkafka_cgrp.o rdkafka_pattern.o rdkafka_partition.o rdkafka_subscription.o rdkafka_assignment.o rdkafka_assignor.o rdkafka_range_assignor.o rdkafka_roundrobin_assignor.o rdkafka_sticky_assignor.o rdkafka_feature.o rdcrc32.o crc32c.o rdmurmur2.o rdfnv1a.o cJSON.o rdaddr.o rdrand.o rdlist.o tinycthread.o tinycthread_extra.o rdlog.o rdstring.o rdkafka_event.o rdkafka_metadata.o rdregex.o rdports.o rdkafka_metadata_cache.o rdavl.o rdkafka_sasl.o rdkafka_sasl_plain.o rdkafka_interceptor.o rdkafka_msgset_writer.o rdkafka_msgset_reader.o rdkafka_header.o rdkafka_admin.o rdkafka_aux.o rdkafka_background.o rdkafka_idempotence.o rdkafka_cert.o rdkafka_txnmgr.o rdkafka_coord.o rdbase64.o rdvarint.o rdbuf.o rdmap.o rdunittest.o rdkafka_mock.o rdkafka_mock_handlers.o rdkafka_mock_cgrp.o rdkafka_error.o rdkafka_fetcher.o rdkafka_telemetry.o rdkafka_telemetry_encode.o rdkafka_telemetry_decode.o nanopb/pb_encode.o nanopb/pb_decode.o nanopb/pb_common.o opentelemetry/metrics.pb.o opentelemetry/common.pb.o opentelemetry/resource.pb.o snappy.o rdgz.o rdhdrhistogram.o rdkafka_lz4.o rdxxhash.o lz4.o lz4frame.o lz4hc.o rddl.o rdkafka_plugin.o -o librdkafka.1.dylib -lm -lz -ldl -lpthread
-[33mCreating static library librdkafka.a(B[m
+Creating static library librdkafka.a
 ar rcs librdkafka.a rdkafka.o rdkafka_broker.o rdkafka_msg.o rdkafka_topic.o rdkafka_conf.o rdkafka_timer.o rdkafka_offset.o rdkafka_transport.o rdkafka_buf.o rdkafka_queue.o rdkafka_op.o rdkafka_request.o rdkafka_cgrp.o rdkafka_pattern.o rdkafka_partition.o rdkafka_subscription.o rdkafka_assignment.o rdkafka_assignor.o rdkafka_range_assignor.o rdkafka_roundrobin_assignor.o rdkafka_sticky_assignor.o rdkafka_feature.o rdcrc32.o crc32c.o rdmurmur2.o rdfnv1a.o cJSON.o rdaddr.o rdrand.o rdlist.o tinycthread.o tinycthread_extra.o rdlog.o rdstring.o rdkafka_event.o rdkafka_metadata.o rdregex.o rdports.o rdkafka_metadata_cache.o rdavl.o rdkafka_sasl.o rdkafka_sasl_plain.o rdkafka_interceptor.o rdkafka_msgset_writer.o rdkafka_msgset_reader.o rdkafka_header.o rdkafka_admin.o rdkafka_aux.o rdkafka_background.o rdkafka_idempotence.o rdkafka_cert.o rdkafka_txnmgr.o rdkafka_coord.o rdbase64.o rdvarint.o rdbuf.o rdmap.o rdunittest.o rdkafka_mock.o rdkafka_mock_handlers.o rdkafka_mock_cgrp.o rdkafka_error.o rdkafka_fetcher.o rdkafka_telemetry.o rdkafka_telemetry_encode.o rdkafka_telemetry_decode.o nanopb/pb_encode.o nanopb/pb_decode.o nanopb/pb_common.o opentelemetry/metrics.pb.o opentelemetry/common.pb.o opentelemetry/resource.pb.o snappy.o rdgz.o rdhdrhistogram.o rdkafka_lz4.o rdxxhash.o lz4.o lz4frame.o lz4hc.o rddl.o rdkafka_plugin.o
 cp librdkafka.a librdkafka-dbg.a
+WARNING: librdkafka-static.a: No static libraries available/enabled for inclusion in self-contained static library librdkafka-static.a: this library will be identical to librdkafka.a
 cp librdkafka.1.dylib librdkafka-dbg.1.dylib
-[31mWARNING:[33m librdkafka-static.a: No static libraries available/enabled for inclusion in self-contained static library librdkafka-static.a: this library will be identical to librdkafka.a(B[m
-[31mWARNING:[33m librdkafka-static.a: The following libraries were not available as static libraries and need to be linked dynamically: -lm -lz -ldl -lpthread(B[m
+WARNING: librdkafka-static.a: The following libraries were not available as static libraries and need to be linked dynamically: -lm -lz -ldl -lpthread
 cp librdkafka.a librdkafka-static.a
-[33mCreating librdkafka.dylib symlink(B[m
-rm -f "librdkafka.dylib" && ln -s "librdkafka.1.dylib" "librdkafka.dylib"
 cp librdkafka-dbg.a librdkafka-static-dbg.a
+Creating librdkafka.dylib symlink
+rm -f "librdkafka.dylib" && ln -s "librdkafka.1.dylib" "librdkafka.dylib"
 cp librdkafka-static.a librdkafka-static-dbg.a
-[33mGenerating pkg-config file rdkafka-static.pc(B[m
-[33mChecking librdkafka integrity(B[m
-librdkafka.1.dylib             [32mOK(B[m
-librdkafka.a                   [32mOK(B[m
-Symbol visibility              [32mOK(B[m
+Generating pkg-config file rdkafka-static.pc
+Checking librdkafka integrity
+librdkafka.1.dylib             OK
+librdkafka.a                   OK
+Symbol visibility              OK
 g++ -MD -MP -gstrict-dwarf -O2 -fPIC -Wall -Wsign-compare -Wfloat-equal -Wpointer-arith -Wcast-align -Wno-non-virtual-dtor -c RdKafka.cpp -o RdKafka.o
 g++ -MD -MP -gstrict-dwarf -O2 -fPIC -Wall -Wsign-compare -Wfloat-equal -Wpointer-arith -Wcast-align -Wno-non-virtual-dtor -c ConfImpl.cpp -o ConfImpl.o
 g++ -MD -MP -gstrict-dwarf -O2 -fPIC -Wall -Wsign-compare -Wfloat-equal -Wpointer-arith -Wcast-align -Wno-non-virtual-dtor -c HandleImpl.cpp -o HandleImpl.o
@@ -206,19 +205,19 @@ g++ -MD -MP -gstrict-dwarf -O2 -fPIC -Wall -Wsign-compare -Wfloat-equal -Wpointe
 g++ -MD -MP -gstrict-dwarf -O2 -fPIC -Wall -Wsign-compare -Wfloat-equal -Wpointer-arith -Wcast-align -Wno-non-virtual-dtor -c HeadersImpl.cpp -o HeadersImpl.o
 g++ -MD -MP -gstrict-dwarf -O2 -fPIC -Wall -Wsign-compare -Wfloat-equal -Wpointer-arith -Wcast-align -Wno-non-virtual-dtor -c QueueImpl.cpp -o QueueImpl.o
 g++ -MD -MP -gstrict-dwarf -O2 -fPIC -Wall -Wsign-compare -Wfloat-equal -Wpointer-arith -Wcast-align -Wno-non-virtual-dtor -c MetadataImpl.cpp -o MetadataImpl.o
-[33mGenerating pkg-config file rdkafka++.pc(B[m
-[33mGenerating pkg-config file rdkafka++-static.pc(B[m
-[33mCreating shared library librdkafka++.1.dylib(B[m
-[33mCreating static library librdkafka++.a(B[m
+Generating pkg-config file rdkafka++.pc
+Generating pkg-config file rdkafka++-static.pc
+Creating static library librdkafka++.a
+Creating shared library librdkafka++.1.dylib
 ar rcs librdkafka++.a RdKafka.o ConfImpl.o HandleImpl.o ConsumerImpl.o ProducerImpl.o KafkaConsumerImpl.o TopicImpl.o TopicPartitionImpl.o MessageImpl.o HeadersImpl.o QueueImpl.o MetadataImpl.o
 g++  -shared -dynamiclib -Wl,-install_name,/usr/local/lib/librdkafka++.1.dylib RdKafka.o ConfImpl.o HandleImpl.o ConsumerImpl.o ProducerImpl.o KafkaConsumerImpl.o TopicImpl.o TopicPartitionImpl.o MessageImpl.o HeadersImpl.o QueueImpl.o MetadataImpl.o -o librdkafka++.1.dylib -L../src -lrdkafka
 cp librdkafka++.a librdkafka++-dbg.a
 cp librdkafka++.1.dylib librdkafka++-dbg.1.dylib
-[33mCreating librdkafka++.dylib symlink(B[m
+Creating librdkafka++.dylib symlink
 rm -f "librdkafka++.dylib" && ln -s "librdkafka++.1.dylib" "librdkafka++.dylib"
-[33mChecking librdkafka++ integrity(B[m
-librdkafka++.1.dylib           [32mOK(B[m
-librdkafka++.a                 [32mOK(B[m
+Checking librdkafka++ integrity
+librdkafka++.1.dylib           OK
+librdkafka++.a                 OK
 cargo:rustc-link-search=native=/Users/alexefanov/Desktop/Чат/backend-chat/chat_news/target/debug/build/rdkafka-sys-a8b4c8a2b218cc1e/out/src
 cargo:rustc-link-lib=static=rdkafka
 cargo:root=/Users/alexefanov/Desktop/Чат/backend-chat/chat_news/target/debug/build/rdkafka-sys-a8b4c8a2b218cc1e/out

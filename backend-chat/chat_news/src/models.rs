@@ -1,24 +1,61 @@
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 use chrono::{DateTime, Utc};
+use std::collections::HashMap;
 
-#[derive(Serialize, Deserialize, Clone)]
-#[derive(Debug)]
-pub struct Message {
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct WsInMessage {
+    pub chat_id: Uuid,
+    pub content: Option<String>,
+    pub media_url: Option<String>,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct Claims {
+    pub sub: String,
+    pub exp: i64,
+    pub iat: i64,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct RefreshToken {
+    pub id: Uuid,
+    pub user_id: Uuid,
+    pub token: String,
+    pub expires_at: DateTime<Utc>,
+    pub created_at: DateTime<Utc>,
+    pub revoked: bool,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct RefreshRequest {
+    pub refresh_token: String,
+}
+
+#[derive(Debug, Serialize)]
+pub struct TokenPairResponse {
+    pub access_token: String,
+    pub access_expires: i64,
+    pub refresh_token: String,
+    pub refresh_expires: i64,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ChatEvent {
+    pub event: String,
     pub chat_id: Uuid,
     pub message_id: Uuid,
     pub user_id: Uuid,
-    pub content: String,
+    pub content: Option<String>,
+    pub media_urls: Option<Vec<String>>,
+    pub media_meta: Option<HashMap<String, String>>,
     pub created_at: DateTime<Utc>,
+    pub edited_at: Option<DateTime<Utc>>,
+    pub edited_by: Option<Uuid>,
+    pub deleted_at: Option<DateTime<Utc>>,
+    pub is_deleted: Option<bool>,
+    pub version: Option<i64>,
 }
 
-#[derive(Deserialize)]
-pub struct SendMessageRequest {
-    pub chat_id: Uuid,
-    pub content: String,
-}
-
-#[derive(Serialize)]
-pub struct SendMessageResponse {
-    pub message_id: Uuid,
-}
+#[derive(Clone)]
+pub struct UserUuid(pub Uuid);

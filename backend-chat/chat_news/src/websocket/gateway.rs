@@ -1,33 +1,15 @@
-use crate::models::Message;
-use std::collections::HashMap;
-use tokio::sync::broadcast;
+// src/websocket/gateway.rs
+use axum::extract::ws::WebSocketUpgrade;
+use axum::response::Response;
 use uuid::Uuid;
+use std::sync::Arc;
 
-#[derive(Clone)]
-pub struct WebSocketGateway {
-    // chat_id -> список отправителей для онлайн-пользователей
-    senders: std::sync::Arc<tokio::sync::RwLock<HashMap<Uuid, Vec<broadcast::Sender<String>>>>>,
-}
+use crate::{AppState, websocket::handler::handle_websocket};
 
-impl WebSocketGateway {
-    pub fn new() -> Self {
-        Self {
-            senders: std::sync::Arc::new(tokio::sync::RwLock::new(HashMap::new())),
-        }
-    }
-
-    pub async fn add_user_to_chat(&self, chat_id: Uuid, sender: broadcast::Sender<String>) {
-        let mut senders = self.senders.write().await;
-        senders.entry(chat_id).or_default().push(sender);
-    }
-
-    pub async fn broadcast_to_chat(&self, chat_id: Uuid, message: &Message) {
-        let senders = self.senders.read().await;
-        if let Some(chat_senders) = senders.get(&chat_id) {
-            let msg_json = serde_json::to_string(message).unwrap();
-            for sender in chat_senders {
-                let _ = sender.send(msg_json.clone());
-            }
-        }
-    }
+pub async fn ws_handler(
+    ws: WebSocketUpgrade,
+    user_id: Uuid,
+    state: Arc<AppState>,
+) -> Response {
+    ws.on_upgrade(|socket| handle_websocket(socket, user_id, state))
 }
