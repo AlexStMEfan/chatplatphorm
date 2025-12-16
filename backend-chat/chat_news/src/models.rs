@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 use chrono::{DateTime, Utc};
-use std::collections::HashMap;
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct WsInMessage {
@@ -29,7 +28,7 @@ pub struct RefreshToken {
 
 #[derive(Debug, Deserialize)]
 pub struct RefreshRequest {
-    pub refresh_token: String,
+    
 }
 
 #[derive(Debug, Serialize)]
@@ -42,19 +41,18 @@ pub struct TokenPairResponse {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ChatEvent {
-    pub event: String,
     pub chat_id: Uuid,
     pub message_id: Uuid,
     pub user_id: Uuid,
     pub content: Option<String>,
     pub media_urls: Option<Vec<String>>,
-    pub media_meta: Option<HashMap<String, String>>,
+    pub media_meta: Option<serde_json::Value>, // ← Оставить как есть
     pub created_at: DateTime<Utc>,
     pub edited_at: Option<DateTime<Utc>>,
     pub edited_by: Option<Uuid>,
     pub deleted_at: Option<DateTime<Utc>>,
     pub is_deleted: Option<bool>,
-    pub version: Option<i64>,
+    pub version: Option<usize>,
 }
 
 #[derive(Clone)]

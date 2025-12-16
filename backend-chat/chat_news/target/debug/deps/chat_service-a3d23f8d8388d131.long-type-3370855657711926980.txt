@@ -1,0 +1,2 @@
+axum::middleware::FromFn<fn(TypedHeader<Authorization<Bearer>>, Extension<Arc<AppState>>, http::Request<Body>, axum::middleware::Next) -> impl futures_util::Future<Output = std::result::Result<http::Response<Body>, (_, &'static str)>> {auth_middleware::<_>}, (), Route, _>
+axum::middleware::FromFn<fn(TypedHeader<Authorization<Bearer>>, Extension<Arc<AppState>>, http::Request<Body>, axum::middleware::Next) -> impl futures_util::Future<Output = std::result::Result<http::Response<Body>, (_, &'static str)>> {auth_middleware::<_>}, (), Route, _>: Service<http::Request<Body>>

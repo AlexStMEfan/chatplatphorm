@@ -15,5 +15,5 @@ pub fn validate_jwt(secret: &str, token: &str) -> Result<Uuid, JwtError> {
     )?;
     
     Uuid::parse_str(&token_data.claims.sub)
-        .map_err(|_| JwtError::new(ErrorKind::InvalidToken))
+        .map_err(|_| ErrorKind::InvalidToken.into())
 }

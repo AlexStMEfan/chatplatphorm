@@ -1,0 +1,2 @@
+fn(WebSocketUpgrade, TypedHeader<Authorization<Bearer>>, Extension<Arc<ScyllaDb>>, Extension<Arc<KafkaProducer>>) -> impl std::future::Future<Output = ()> {ws_route}
+fn(WebSocketUpgrade, TypedHeader<Authorization<Bearer>>, Extension<Arc<ScyllaDb>>, Extension<Arc<KafkaProducer>>) -> impl std::future::Future<Output = ()> {ws_route}: Handler<_, _>

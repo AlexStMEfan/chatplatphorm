@@ -8,10 +8,12 @@ use anyhow::{Result, Context};
 use tracing::debug;
 use serde::{Serialize, Deserialize};
 
+use crate::models::ChatEvent;
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Message {
     pub chat_id: Uuid,
-    pub created_at: DateTime<Utc>,
+    pub created_at: chrono::DateTime<chrono::Utc>,
     pub message_id: Uuid,
     pub user_id: Uuid,
     pub content: Option<String>,
@@ -51,6 +53,47 @@ pub struct ScyllaDb {
 
     insert_edit_stmt: PreparedStatement,
     fetch_edits_stmt: PreparedStatement,
+}
+
+
+impl Message {
+    pub fn from_chat_event(ev: ChatEvent) -> Self {
+        // Конвертация media_meta из serde_json::Value → HashMap
+        let media_meta = match ev.media_meta {
+            Some(value) => {
+                if value.is_object() {
+                    // Безопасная конвертация JSON → HashMap<String, String>
+                    value.as_object()
+                        .map(|map| {
+                            map.iter()
+                                .filter_map(|(k, v)| {
+                                    v.as_str().map(|s| (k.clone(), s.to_string()))
+                                })
+                                .collect()
+                        })
+                        .unwrap_or_default()
+                } else {
+                    HashMap::new()
+                }
+            }
+            None => HashMap::new(),
+        };
+
+        Self {
+            chat_id: ev.chat_id,
+            message_id: ev.message_id,
+            user_id: ev.user_id,
+            content: ev.content,
+            media_urls: Some(ev.media_urls.unwrap_or_default()),
+            media_meta: Some(media_meta),
+            created_at: ev.created_at,
+            edited_at: ev.edited_at,
+            edited_by: ev.edited_by,
+            deleted_at: ev.deleted_at,
+            is_deleted: ev.is_deleted.unwrap_or(false),
+            version: ev.version.map(|v| v as i64).unwrap_or(0),
+        }
+    }
 }
 
 impl ScyllaDb {
@@ -319,3 +362,4 @@ impl ScyllaDb {
         Ok(())
     }
 }
+

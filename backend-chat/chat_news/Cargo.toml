@@ -8,10 +8,12 @@ edition = "2021"
 axum = { version = "0.7", features = ["ws", "json"] }
 tokio = { version = "1", features = ["full"] }
 tower = "0.4"
+http = "1.4.0"
 
 # Serialization
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
+axum-core = "0.5.5"
 
 # Utils
 uuid = { version = "1.7", features = ["serde", "v4"] }
@@ -43,3 +45,5 @@ anyhow = "1.0"
 thiserror = "1.0"
 headers = "0.4.1"
 axum-extra = { version = "0.12", features = ["typed-header"] }
+futures-util = "0.3"
+tower-http = "0.5"
