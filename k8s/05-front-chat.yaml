@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: chat-platform
+  name: front-chat
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: front-chat
+  template:
+    metadata:
+      labels:
+        app: front-chat
+    spec:
+      containers:
+      - name: front-chat
+        image: your-registry/front-chat:v1.0  # ← ваш образ
+        ports:
+        - containerPort: 80
+        env:
+        - name: REACT_APP_API_URL
+          value: "https://chat.example.com/api"  # ← ваш домен
+        - name: REACT_APP_WS_URL
+          value: "wss://chat.example.com/ws"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: chat-platform
+  name: front-chat
+spec:
+  selector:
+    app: front-chat
+  ports:
+  - port: 80
+    targetPort: 80
