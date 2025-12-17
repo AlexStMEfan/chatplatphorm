@@ -1,0 +1,34 @@
+# Rust / Cargo
+/target/
+**/*.rs.bk
+**/*.rs.old
+Cargo.lock
+
+# IDEs
+.idea/
+*.iml
+.vscode/
+*.sublime-workspace
+*.sublime-project
+
+# OS файлы
+.DS_Store
+Thumbs.db
+
+# Логи
+*.log
+
+# dotenv / env
+.env
+.env.local
+.env.*.local
+
+# Backup / temporary
+*.bak
+*.tmp
+*.swp
+
+# Binaries (если иногда в репо копируете release)
+/bin/
+/debug/
+/release/

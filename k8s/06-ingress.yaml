@@ -11,19 +11,21 @@ metadata:
     nginx.ingress.kubernetes.io/configuration-snippet: |
       proxy_set_header Upgrade $http_upgrade;
       proxy_set_header Connection "upgrade";
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
 spec:
   ingressClassName: nginx
   rules:
-  - host: chat.example.com  # ← ваш домен
+  - host: chat.example.com
     http:
       paths:
-      - path: /
+      # 1️⃣ WebSocket путь должен идти первым
+      - path: /ws
         pathType: Prefix
         backend:
           service:
-            name: front-chat
+            name: chat-service
             port:
-              number: 80
+              number: 8081
 
       - path: /api/auth
         pathType: Prefix
@@ -41,10 +43,11 @@ spec:
             port:
               number: 8081
 
-      - path: /ws
+      # фронт
+      - path: /
         pathType: Prefix
         backend:
           service:
-            name: chat-service
+            name: front-chat
             port:
-              number: 8081
+              number: 80

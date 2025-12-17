@@ -3,38 +3,24 @@ import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import ChatList from "./Chat/ChatList";
 import ChatHeader from "./Chat/ChatHeader";
-import type { Chat, Message } from "./Chat/types";
+import type { Message } from "../types/chat";
 import { File, Send, Smile } from "lucide-react";
-import { useChatContext } from "../pages/ChatPage";
-
+import { useChatContext } from "../hooks/useChatContext";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Placeholder from "@tiptap/extension-placeholder";
 import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
 import { createLowlight } from "lowlight";
-
-interface WindowChatProps {
-  chats: Chat[];
-  activeChatId: string | null;
-  setActiveChatId: (id: string | null) => void;
-  onChatCreate: (chat: Chat) => void;
-}
+import { useChatSocket } from "../api/useChatSocket";
+import { useMessagesStore } from "../stores/messages";
 
 export default function WindowChat() {
-  const [messages, setMessages] = useState<Message[]>([]);
+  const { chats, activeChatId, setActiveChatId, handleChatCreate } = useChatContext();
   const [inputValue, setInputValue] = useState("");
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const availableEmojis = ["😊", "😂", "❤️", "👍", "🔥", "😢"];
-  const { chats, activeChatId, setActiveChatId, handleChatCreate } = useChatContext();
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
-
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
 
   const editor = useEditor({
     extensions: [
@@ -48,76 +34,94 @@ export default function WindowChat() {
     },
   });
 
+  const messages = useMessagesStore((s) => s.messages[activeChatId || ""] || []);
+  const addMessage = useMessagesStore((s) => s.addMessage);
+  const addReaction = useMessagesStore((s) => s.addReaction);
+
+  // WebSocket
+  const wsRef = useChatSocket();
+
+  useEffect(() => {
+  const socket = wsRef.current;
+  if (!socket) return;
+
+  interface ChatEvent {
+  type: "message" | "reaction" | "read";
+  payload: unknown;
+}
+  // Вместо onmessage используем socket.io on
+  socket.on("chat-event", (data: ChatEvent) => {
+  switch (data.type) {
+    case "message": {
+      const msg = data.payload as Message;
+      addMessage({
+        ...msg,
+        sender: msg.sender || { id: msg.userId, name: "Unknown" },
+        reactions: msg.reactions || [],
+        readBy: msg.readBy || [],
+      });
+      break;
+    }
+    case "reaction": {
+      const reactionData = data.payload as { messageId: string; reaction: { emoji: string }; chatId: string };
+      addReaction(reactionData.messageId, reactionData.reaction.emoji, reactionData.chatId, "user1");
+      break;
+    }
+    case "read":
+      break;
+  }
+});
+
+  return () => {
+    socket.off("chat-event"); // отписываемся
+  };
+}, [wsRef, addMessage, addReaction]);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+  useEffect(() => scrollToBottom(), [messages]);
+
   const handleFileUpload = (files: FileList) => {
     if (!activeChatId) return;
-
-    const newMessages: Message[] = Array.from(files).map((file) => {
-      let messageType: "image" | "file" | "audio" | "video" | "other" = "other";
-      if (file.type.startsWith("image/")) messageType = "image";
-      else if (file.type.startsWith("audio/")) messageType = "audio";
-      else if (file.type.startsWith("video/")) messageType = "video";
-      else if (
-        file.type.includes("pdf") ||
-        file.type.includes("officedocument") ||
-        file.type.includes("text")
-      )
-        messageType = "file";
-
-      return {
+    Array.from(files).forEach((file) => {
+      const newMessage: Message = {
         id: String(Date.now() + Math.random()),
         chatId: activeChatId,
-        role: "user",
+        userId: "user1",
         content: URL.createObjectURL(file),
+        createdAt: new Date().toISOString(),
         sender: { id: "user1", name: "Вы" },
-        fileMeta: {
-          name: file.name,
-          size: file.size,
-          type: file.type,
-          messageType,
-        },
-        timestamp: new Date().toISOString(),
+        reactions: [],
+        readBy: [],
       };
+      addMessage(newMessage);
+      wsRef.current?.send(JSON.stringify({ type: "message", payload: newMessage }));
     });
-
-    setMessages((prev) => [...prev, ...newMessages]);
   };
 
   const handleSendMessage = () => {
     if (!inputValue.trim() || !activeChatId) return;
-
     const newMessage: Message = {
       id: String(Date.now()),
       chatId: activeChatId,
-      role: "user",
+      userId: "user1",
       content: inputValue,
+      createdAt: new Date().toISOString(),
       sender: { id: "user1", name: "Вы" },
-      timestamp: new Date().toISOString(),
+      reactions: [],
+      readBy: [],
     };
-
-    setMessages((prev) => [...prev, newMessage]);
-    setInputValue("");
+    addMessage(newMessage);
     editor?.commands.setContent("");
-
-    setTimeout(() => {
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: String(Date.now() + 1),
-          chatId: activeChatId,
-          role: "assistant",
-          content: "Ответ ассистента на ваше сообщение.",
-          sender: { id: "bot", name: "Ассистент" },
-          timestamp: new Date().toISOString(),
-        },
-      ]);
-    }, 600);
+    setInputValue("");
+    wsRef.current?.send(JSON.stringify({ type: "message", payload: newMessage }));
   };
 
   const activeChat = chats.find((c) => c.id === activeChatId);
 
   return (
     <motion.div className="w-full h-full bg-white/50 dark:bg-dark-surface/30 backdrop-blur-2xl border border-white/30 dark:border-dark-border rounded-3xl flex overflow-hidden">
-      {/* Sidebar */}
       <motion.div className="w-[320px] h-full border-r border-border dark:border-dark-border overflow-auto">
         <ChatList
           chats={chats}
@@ -127,7 +131,6 @@ export default function WindowChat() {
         />
       </motion.div>
 
-      {/* Активный чат */}
       <AnimatePresence mode="wait">
         {activeChat && (
           <motion.div className="flex-1 flex flex-col">
@@ -136,46 +139,22 @@ export default function WindowChat() {
               chatAvatar={activeChat.avatar}
               isGroup={activeChat.isGroup}
               currentUserId="user1"
-              messages={messages.filter((m) => m.chatId === activeChat.id)}
-              onReact={(messageId, emoji) =>
-                setMessages((prev) =>
-                  prev.map((m) =>
-                    m.id === messageId
-                      ? {
-                          ...m,
-                          reactions: m.reactions
-                            ? [
-                                ...m.reactions.filter((r) => r.emoji !== emoji),
-                                {
-                                  emoji,
-                                  count:
-                                    (m.reactions.find((r) => r.emoji === emoji)
-                                      ?.count || 0) + 1,
-                                },
-                              ]
-                            : [{ emoji, count: 1 }],
-                        }
-                      : m
-                  )
-                )
-              }
-              onOpenActions={(messageId) =>
-                console.log("Открыть меню для сообщения:", messageId)
-              }
+              messages={messages}
+              onReact={(messageId, emoji) => addReaction(messageId, emoji, activeChatId!, "user1")}
+              onOpenActions={(messageId) => console.log("Открыть меню для сообщения:", messageId)}
             />
 
             <div
               className="relative flex items-end gap-2 p-2 rounded-t-3xl border-t border-white/20 bg-white/20 dark:bg-black/20 backdrop-blur-2xl shadow-[inset_0_0_80px_rgba(255,255,255,0.18)]"
-              onDragOver={(e) => {
+              onDragOver={(e: React.DragEvent<HTMLDivElement>) => {
                 e.preventDefault();
                 setIsDragging(true);
               }}
               onDragLeave={() => setIsDragging(false)}
-              onDrop={(e) => {
+              onDrop={(e: React.DragEvent<HTMLDivElement>) => {
                 e.preventDefault();
                 setIsDragging(false);
-                if (e.dataTransfer.files?.length)
-                  handleFileUpload(e.dataTransfer.files);
+                if (e.dataTransfer.files?.length) handleFileUpload(e.dataTransfer.files);
               }}
             >
               <AnimatePresence>
@@ -198,14 +177,10 @@ export default function WindowChat() {
                 type="file"
                 multiple
                 className="hidden"
-                onChange={(e) =>
-                  e.target.files && handleFileUpload(e.target.files)
-                }
+                onChange={(e) => e.target.files && handleFileUpload(e.target.files)}
               />
               <button
-                onClick={() =>
-                  document.getElementById("fileUploadInput")?.click()
-                }
+                onClick={() => document.getElementById("fileUploadInput")?.click()}
                 className="shrink-0 w-10 h-10 p-2 rounded-xl hover:bg-white/30 dark:hover:bg-white/20 text-text-muted dark:text-dark-text-muted transition flex items-center justify-center"
                 title="Загрузить файл"
               >

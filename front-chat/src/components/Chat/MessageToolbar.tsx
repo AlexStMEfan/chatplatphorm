@@ -1,50 +1,57 @@
 // src/components/Chat/MessageToolbar.tsx
-import React from "react";
-import { Editor, Transforms } from "slate";
-import type { ReactEditor } from "slate-react";
+import { ReactEditor } from "slate-react";
+import { Editor, Transforms, type BaseEditor, Element as SlateElement } from "slate";
 import { Bold, Italic, Code, Type, List, ListOrdered, Quote } from "lucide-react";
 
 interface ToolbarProps {
-  editor: ReactEditor & Editor;
+  editor: ReactEditor & BaseEditor;
 }
 
-function isMarkActive(editor: any, format: string) {
-  const marks = Editor.marks(editor);
-  // @ts-ignore
+type BlockType =
+  | "paragraph"
+  | "heading-one"
+  | "bulleted-list"
+  | "numbered-list"
+  | "list-item"
+  | "blockquote";
+
+function isMarkActive(editor: ReactEditor & BaseEditor, format: string) {
+  const marks = Editor.marks(editor) as Record<string, boolean> | null;
   return marks ? marks[format] === true : false;
 }
 
-function toggleMark(editor: any, format: string) {
+function toggleMark(editor: ReactEditor & BaseEditor, format: string) {
   const isActive = isMarkActive(editor, format);
   if (isActive) {
-    // @ts-ignore
     Editor.removeMark(editor, format);
   } else {
-    // @ts-ignore
     Editor.addMark(editor, format, true);
   }
 }
 
-function toggleBlock(editor: any, blockType: string) {
-  const isActive = Editor.nodes(editor, {
-    match: (n: any) => n.type === blockType,
-  });
+function toggleBlock(editor: ReactEditor & BaseEditor, blockType: BlockType) {
+  const [match] = Array.from(
+    Editor.nodes(editor, {
+      match: (n) => SlateElement.isElement(n) && n.type === blockType,
+    })
+  );
 
-  const [match] = Array.from(isActive);
   if (match) {
     Transforms.unwrapNodes(editor, {
-      match: (n: any) => n.type === "bulleted-list" || n.type === "numbered-list",
+      match: (n) =>
+        SlateElement.isElement(n) &&
+        (n.type === "bulleted-list" || n.type === "numbered-list"),
       split: true,
     });
-    Transforms.setNodes(editor, { type: "paragraph" } as any);
+    Transforms.setNodes(editor, { type: "paragraph" });
     return;
   }
 
   if (blockType === "bulleted-list" || blockType === "numbered-list") {
-    Transforms.setNodes(editor, { type: "list-item" } as any);
-    Transforms.wrapNodes(editor, { type: blockType, children: [] } as any);
+    Transforms.setNodes(editor, { type: "list-item" });
+    Transforms.wrapNodes(editor, { type: blockType, children: [] });
   } else {
-    Transforms.setNodes(editor, { type: blockType } as any);
+    Transforms.setNodes(editor, { type: blockType });
   }
 }
 
@@ -55,7 +62,10 @@ export default function MessageToolbar({ editor }: ToolbarProps) {
     <div className="flex gap-2 items-center">
       <button
         type="button"
-        onMouseDown={(e) => { e.preventDefault(); toggleMark(editor, "bold"); }}
+        onMouseDown={(e) => {
+          e.preventDefault();
+          toggleMark(editor, "bold");
+        }}
         className="p-1 rounded hover:bg-gray-200"
         title="Bold"
       >
@@ -64,7 +74,10 @@ export default function MessageToolbar({ editor }: ToolbarProps) {
 
       <button
         type="button"
-        onMouseDown={(e) => { e.preventDefault(); toggleMark(editor, "italic"); }}
+        onMouseDown={(e) => {
+          e.preventDefault();
+          toggleMark(editor, "italic");
+        }}
         className="p-1 rounded hover:bg-gray-200"
         title="Italic"
       >
@@ -73,7 +86,10 @@ export default function MessageToolbar({ editor }: ToolbarProps) {
 
       <button
         type="button"
-        onMouseDown={(e) => { e.preventDefault(); toggleMark(editor, "code"); }}
+        onMouseDown={(e) => {
+          e.preventDefault();
+          toggleMark(editor, "code");
+        }}
         className="p-1 rounded hover:bg-gray-200"
         title="Inline code"
       >
@@ -82,7 +98,10 @@ export default function MessageToolbar({ editor }: ToolbarProps) {
 
       <button
         type="button"
-        onMouseDown={(e) => { e.preventDefault(); toggleBlock(editor, "heading-one"); }}
+        onMouseDown={(e) => {
+          e.preventDefault();
+          toggleBlock(editor, "heading-one");
+        }}
         className="p-1 rounded hover:bg-gray-200"
         title="H1"
       >
@@ -91,7 +110,10 @@ export default function MessageToolbar({ editor }: ToolbarProps) {
 
       <button
         type="button"
-        onMouseDown={(e) => { e.preventDefault(); toggleBlock(editor, "bulleted-list"); }}
+        onMouseDown={(e) => {
+          e.preventDefault();
+          toggleBlock(editor, "bulleted-list");
+        }}
         className="p-1 rounded hover:bg-gray-200"
         title="Bulleted list"
       >
@@ -100,7 +122,10 @@ export default function MessageToolbar({ editor }: ToolbarProps) {
 
       <button
         type="button"
-        onMouseDown={(e) => { e.preventDefault(); toggleBlock(editor, "numbered-list"); }}
+        onMouseDown={(e) => {
+          e.preventDefault();
+          toggleBlock(editor, "numbered-list");
+        }}
         className="p-1 rounded hover:bg-gray-200"
         title="Numbered list"
       >
@@ -109,7 +134,10 @@ export default function MessageToolbar({ editor }: ToolbarProps) {
 
       <button
         type="button"
-        onMouseDown={(e) => { e.preventDefault(); toggleBlock(editor, "blockquote"); }}
+        onMouseDown={(e) => {
+          e.preventDefault();
+          toggleBlock(editor, "blockquote");
+        }}
         className="p-1 rounded hover:bg-gray-200"
         title="Quote"
       >

@@ -8,8 +8,11 @@ interface SortableChatItemProps {
   chat: Chat;
   activeChat: string | null;
   setActiveChat: (id: string) => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   listeners: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   attributes: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   setNodeRef: any;
   isDragging: boolean;
   style: React.CSSProperties;

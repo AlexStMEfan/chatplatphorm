@@ -27,6 +27,7 @@ export function slateToMarkdown(value: Descendant[]): string {
   if (!node || !("children" in node)) return "";
 
   return node.children
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     .map((child: any) => {
       let t = child.text;
       if (child.bold) t = `**${t}**`;

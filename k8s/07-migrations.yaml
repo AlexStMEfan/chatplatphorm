@@ -1,0 +1,130 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: chat-all-migrations
+  namespace: chat-platform
+data:
+  # -------------------------------
+  # Auth-service (PostgreSQL)
+  # -------------------------------
+  0001_init.sql: |
+    -- Ensure extensions
+    CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+
+    -- Users
+    CREATE TABLE IF NOT EXISTS users (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        email TEXT UNIQUE NOT NULL,
+        password_hash TEXT,
+        provider TEXT NOT NULL DEFAULT 'local',
+        provider_id TEXT,
+        name TEXT,
+        avatar_url TEXT,
+        is_active BOOLEAN NOT NULL DEFAULT TRUE,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
+
+    -- updated_at trigger
+    CREATE OR REPLACE FUNCTION set_updated_at()
+    RETURNS TRIGGER AS $$
+    BEGIN
+      NEW.updated_at = now();
+      RETURN NEW;
+    END;
+    $$ LANGUAGE plpgsql;
+
+    DROP TRIGGER IF EXISTS trg_users_set_updated_at ON users;
+    CREATE TRIGGER trg_users_set_updated_at
+    BEFORE UPDATE ON users
+    FOR EACH ROW
+    EXECUTE FUNCTION set_updated_at();
+
+    -- Sessions (UUID id)
+    CREATE TABLE IF NOT EXISTS sessions (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        refresh_token TEXT NOT NULL,
+        user_agent TEXT,
+        ip_address TEXT,
+        created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+        expires_at TIMESTAMPTZ NOT NULL
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_sessions_user_id ON sessions(user_id);
+    CREATE INDEX IF NOT EXISTS idx_sessions_refresh_token ON sessions(refresh_token);
+
+  # -------------------------------
+  # Chat-service (ScyllaDB)
+  # -------------------------------
+  0001_init.cql: |
+    -- ваш CQL скрипт для chat-service
+    CREATE KEYSPACE IF NOT EXISTS chat WITH replication = {'class': 'SimpleStrategy', 'replication_factor': 1};
+    CREATE TABLE IF NOT EXISTS messages (
+      id text PRIMARY KEY,
+      chat_id text,
+      user_id text,
+      content text,
+      created_at timestamp
+    );
+
+  0002_message_edits.cql: |
+    -- Table for message edits history
+    CREATE TABLE IF NOT EXISTS chat.message_edits (
+      message_id uuid,
+      edit_id uuid,
+      edited_at timestamp,
+      editor uuid,
+      old_content text,
+      new_content text,
+      meta map<text, text>,
+      PRIMARY KEY (message_id, edited_at, edit_id)
+    ) WITH CLUSTERING ORDER BY (edited_at DESC);
+
+  schema.cql: |
+    -- Keyspace (create once)
+    -- Используем NetworkTopologyStrategy для продакшена
+    -- Если только один дата-центр, замените на SimpleStrategy
+    CREATE KEYSPACE IF NOT EXISTS chat
+    WITH replication = {
+        'class': 'NetworkTopologyStrategy',
+        'datacenter1': 3
+    }
+    AND durable_writes = true;
+
+    -- Table for messages
+    CREATE TABLE IF NOT EXISTS chat.messages (
+        chat_id uuid,
+        created_at timestamp,
+        message_id uuid,
+        user_id uuid,
+        content text,
+        media_urls list<text>,
+        media_meta map<text,text>,
+        is_deleted boolean,
+        deleted_at timestamp,
+        edited_at timestamp,
+        edited_by uuid,
+        version bigint,
+        PRIMARY KEY (chat_id, created_at, message_id)
+    ) WITH CLUSTERING ORDER BY (created_at DESC)
+      -- TTL можно указывать на insert, например: INSERT ... USING TTL 604800
+    ;
+
+    -- Secondary table for fast lookup by message_id
+    CREATE TABLE IF NOT EXISTS chat.messages_by_id (
+        message_id uuid PRIMARY KEY,
+        chat_id uuid,
+        created_at timestamp,
+        user_id uuid,
+        content text,
+        media_urls list<text>,
+        media_meta map<text,text>,
+        is_deleted boolean,
+        deleted_at timestamp,
+        edited_at timestamp,
+        edited_by uuid,
+        version bigint
+    );

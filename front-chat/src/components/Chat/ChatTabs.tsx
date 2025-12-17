@@ -1,4 +1,4 @@
-// ChatTabs.tsx
+// src/components/Chat/ChatTabs.tsx
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import ChatMessage from "./ChatMessage";
@@ -6,9 +6,10 @@ import type { Message } from "./types";
 
 interface ChatTabsProps {
   messages: Message[];
+  currentUserId: string;
 }
 
-export default function ChatTabs({ messages }: ChatTabsProps) {
+export default function ChatTabs({ messages, currentUserId }: ChatTabsProps) {
   const [activeTab, setActiveTab] = useState("Чат");
   const [prevTab, setPrevTab] = useState(activeTab);
 
@@ -27,15 +28,14 @@ export default function ChatTabs({ messages }: ChatTabsProps) {
     exit: (direction: number) => ({ x: direction > 0 ? -50 : 50, opacity: 0 }),
   };
 
-  const tabContent = {
+  const tabContent: Record<string, React.ReactNode> = {
     "Чат": (
       <div className="flex-1 flex flex-col gap-2 overflow-y-auto p-2">
         {messages.map((msg) => (
           <ChatMessage
             key={msg.id}
-            content={msg.content}
-            role={msg.role}
-            avatar={msg.sender?.avatar}
+            message={msg}
+            currentUserId={currentUserId}
           />
         ))}
       </div>
@@ -67,7 +67,7 @@ export default function ChatTabs({ messages }: ChatTabsProps) {
             {activeTab === tab && (
               <motion.div
                 layoutId="tab-underline"
-                className="absolute bottom-0 left-0 w-full h-0.5 bg-gradient-to-r from-primary to-primary-hover rounded"
+                className="absolute bottom-0 left-0 w-full h-0.5 bg-primary rounded"
                 transition={{ type: "spring", stiffness: 500, damping: 30 }}
               />
             )}
@@ -88,7 +88,7 @@ export default function ChatTabs({ messages }: ChatTabsProps) {
             transition={{ duration: 0.25 }}
             className="absolute top-0 left-0 w-full h-full"
           >
-            {tabContent[activeTab as keyof typeof tabContent]}
+            {tabContent[activeTab]}
           </motion.div>
         </AnimatePresence>
       </div>

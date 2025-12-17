@@ -1,12 +1,14 @@
 // Chat/types.ts
 
+/** Пользователь (данные приходят из auth-сервиса / кэша) */
 export interface User {
   id: string;
-  name: string;
+  name?: string;
   email?: string;
-  avatar?: string; // добавлено
+  avatar?: string;
 }
 
+/** Чат (элемент списка чатов) */
 export interface Chat {
   id: string;
   name?: string;
@@ -19,42 +21,70 @@ export interface Chat {
   isGroup?: boolean;
 }
 
+/** Props для списка чатов */
 export interface ChatListProps {
   chats: Chat[];
   activeChatId?: string | null;
   setActiveChatId?: React.Dispatch<React.SetStateAction<string | null>>;
 }
 
-// Расширяем Message
-export interface Message {
-  id: string;
-  chatId: string;
-  role: "user" | "assistant";
-  content: string;
-  sender: User;
-  readBy?: ReadByUser[]; 
-  reactions?: MessageReaction[]; 
-  fileMeta?: MessageFileMeta;
-  createdAt?: string;
-  timestamp?: string;
-}
-
-// Для реакций
+/** Реакция на сообщение */
 export interface MessageReaction {
   emoji: string;
   count: number;
-  reactedBy?: string[]; // массив userId, кто поставил реакцию
+  reactedBy?: string[]; // userId
 }
 
-// Для прочитавших сообщение
-export interface ReadByUser {
-  id: string;
-  avatar?: string;
-}
-
+/** Метаданные файла */
 export interface MessageFileMeta {
   name: string;
   size: number;
   type: string;
   messageType: "image" | "file" | "audio" | "video" | "other";
+}
+
+/**
+ * UI-модель сообщения
+ * ⚠️ НЕ равна backend ChatEvent
+ */
+export interface Message {
+  /** message_id */
+  id: string;
+
+  /** chat_id */
+  chatId: string;
+
+  /** user_id (из Scylla / JWT) */
+  userId: string;
+
+  /** Текст сообщения */
+  content?: string;
+
+  /** Ссылки на медиа */
+  mediaUrls?: string[];
+
+  /**
+   * Метаданные медиа
+   * backend: serde_json::Value
+   */
+  mediaMeta?: MessageFileMeta;
+
+  /** ISO дата создания */
+  createdAt: string;
+
+  editedAt?: string;
+  isDeleted?: boolean;
+
+  /** Данные отправителя (подтягиваются отдельно) */
+  sender?: User;
+
+  /** Реакции */
+  reactions?: MessageReaction[];
+  readBy?: string[];
+}
+
+/** Пользователь, прочитавший сообщение */
+export interface ReadByUser {
+  id: string;
+  avatar?: string;
 }

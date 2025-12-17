@@ -1,7 +1,6 @@
-// src/pages/ChatPage.tsx
-import { Outlet, useOutletContext } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 import { useState } from "react";
-import type { Chat } from "../components/Chat/types";
+import type { Chat, User } from "../components/Chat/types";
 import SideBar from "../components/Sidebar/LeftSidebar";
 import Header from "../components/Header";
 
@@ -10,6 +9,10 @@ const initialChats: Chat[] = [ /* ... */ ];
 export default function ChatPage() {
   const [chats, setChats] = useState<Chat[]>(initialChats);
   const [activeChatId, setActiveChatId] = useState<string | null>(null);
+
+  // Пример токена и текущего пользователя, позже заменим на реальное
+  const token = "YOUR_JWT_TOKEN";
+  const currentUser: User = { id: "user1", name: "Вы" };
 
   const handleChatCreate = (chat: Chat) => {
     setChats(prev => [...prev, chat]);
@@ -24,19 +27,16 @@ export default function ChatPage() {
           <SideBar />
         </div>
         <div className="flex-1 relative z-20">
-          <Outlet context={{ chats, activeChatId, setActiveChatId, handleChatCreate }} />
+          <Outlet context={{ 
+            chats, 
+            activeChatId, 
+            setActiveChatId, 
+            handleChatCreate,
+            token,
+            currentUser
+          }} />
         </div>
       </div>
     </div>
   );
-}
-
-// Хук для использования контекста в дочерних компонентах
-export function useChatContext() {
-  return useOutletContext<{
-    chats: Chat[];
-    activeChatId: string | null;
-    setActiveChatId: (id: string | null) => void;
-    handleChatCreate: (chat: Chat) => void;
-  }>();
 }

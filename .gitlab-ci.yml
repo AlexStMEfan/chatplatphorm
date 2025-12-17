@@ -1,0 +1,123 @@
+stages:
+  - build
+  - docker
+  - migrate
+  - deploy
+
+variables:
+  DOCKER_REGISTRY: registry.example.com
+  PROJECT_NAMESPACE: chat-platform
+  KUBE_CONTEXT: your-kube-context
+
+# ----------------------------
+# 1️⃣ Build Rust backend
+# ----------------------------
+build-backend:
+  stage: build
+  image: rust:1.73
+  script:
+    - cd auth-service && cargo build --release && cd ..
+    - cd chat-service && cargo build --release
+  artifacts:
+    paths:
+      - auth-service/target/release/auth-service
+      - chat-service/target/release/chat-service
+    expire_in: 1h
+
+# ----------------------------
+# 2️⃣ Build frontend
+# ----------------------------
+build-frontend:
+  stage: build
+  image: node:22.16.0
+  script:
+    - cd front-chat
+    - npm ci
+    - npm run build
+  artifacts:
+    paths:
+      - front-chat/dist
+    expire_in: 1h
+
+# ----------------------------
+# 3️⃣ Build & Push Docker images
+# ----------------------------
+docker-build:
+  stage: docker
+  image: docker:24.0.5
+  services:
+    - docker:dind
+  variables:
+    DOCKER_HOST: tcp://docker:2375/
+    DOCKER_TLS_CERTDIR: ""
+  script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $DOCKER_REGISTRY
+    - docker build -t $DOCKER_REGISTRY/$CI_PROJECT_NAME/auth-service:v$CI_PIPELINE_ID ./auth-service
+    - docker push $DOCKER_REGISTRY/$CI_PROJECT_NAME/auth-service:v$CI_PIPELINE_ID
+    - docker build -t $DOCKER_REGISTRY/$CI_PROJECT_NAME/chat-service:v$CI_PIPELINE_ID ./chat-service
+    - docker push $DOCKER_REGISTRY/$CI_PROJECT_NAME/chat-service:v$CI_PIPELINE_ID
+    - docker build -t $DOCKER_REGISTRY/$CI_PROJECT_NAME/front-chat:v$CI_PIPELINE_ID ./front-chat
+    - docker push $DOCKER_REGISTRY/$CI_PROJECT_NAME/front-chat:v$CI_PIPELINE_ID
+
+# ----------------------------
+# 4️⃣ Run DB migrations
+# ----------------------------
+migrate-db:
+  stage: migrate
+  image: bitnami/kubectl:1.30
+  script:
+    - kubectl config use-context $KUBE_CONTEXT
+
+    # Auth-service (PostgreSQL)
+    - echo "Running auth-service migrations..."
+    - kubectl -n $PROJECT_NAMESPACE run auth-migrate \
+        --rm -i --restart=Never \
+        --image=postgres:16 \
+        --env-from=secret/chat-secrets \
+        --overrides='{
+          "spec":{
+            "volumes":[{"name":"auth-migrations","configMap":{"name":"auth-migrations"}}],
+            "containers":[{
+              "name":"auth-migrate",
+              "volumeMounts":[{"mountPath":"/migrations","name":"auth-migrations"}]
+            }]
+          }
+        }' \
+        --command -- bash -c "psql \"postgresql://$POSTGRES_USER:$POSTGRES_PASSWORD@$POSTGRES_HOST:$POSTGRES_PORT/$POSTGRES_DB\" -f /migrations/0001_init.sql"
+
+    # Chat-service (ScyllaDB)
+    - echo "Running chat-service migrations..."
+    - kubectl -n $PROJECT_NAMESPACE run chat-migrate \
+        --rm -i --restart=Never \
+        --image=bitnami/cassandra:4.1 \
+        --env-from=secret/chat-secrets \
+        --overrides='{
+          "spec":{
+            "volumes":[{"name":"chat-migrations","configMap":{"name":"chat-all-migrations"}}],
+            "containers":[{
+              "name":"chat-migrate",
+              "volumeMounts":[{"mountPath":"/db","name":"chat-migrations"}]
+            }]
+          }
+        }' \
+        --command -- bash -c "cqlsh $SCYLLA_NODES 9042 -f /db/schema.cql && \
+                               cqlsh $SCYLLA_NODES 9042 -f /db/0002_message_edits.cql"
+  only:
+    - main
+
+# ----------------------------
+# 5️⃣ Deploy to Kubernetes
+# ----------------------------
+deploy-k8s:
+  stage: deploy
+  image: bitnami/kubectl:1.30
+  script:
+    - kubectl config use-context $KUBE_CONTEXT
+    - kubectl -n $PROJECT_NAMESPACE set image deployment/auth-service auth-service=$DOCKER_REGISTRY/$CI_PROJECT_NAME/auth-service:v$CI_PIPELINE_ID
+    - kubectl -n $PROJECT_NAMESPACE set image deployment/chat-service chat-service=$DOCKER_REGISTRY/$CI_PROJECT_NAME/chat-service:v$CI_PIPELINE_ID
+    - kubectl -n $PROJECT_NAMESPACE set image deployment/front-chat front-chat=$DOCKER_REGISTRY/$CI_PROJECT_NAME/front-chat:v$CI_PIPELINE_ID
+    - kubectl -n $PROJECT_NAMESPACE rollout status deployment/auth-service
+    - kubectl -n $PROJECT_NAMESPACE rollout status deployment/chat-service
+    - kubectl -n $PROJECT_NAMESPACE rollout status deployment/front-chat
+  only:
+    - main
