@@ -88,16 +88,15 @@ pub struct RefreshResponse {
     pub refresh_token: String,
 }
 
-// Модель сессии для Redis
 #[derive(Serialize, Deserialize)]
 struct RedisSession {
     user_id: Uuid,
-    expires_at: i64, // Unix timestamp
+    expires_at: i64,
 }
 
-//
+// ----------------------
 // Handlers
-//
+// ----------------------
 pub async fn register(
     Extension(pool): Extension<PgPool>,
     Json(payload): Json<RegisterRequest>,
@@ -177,40 +176,32 @@ pub async fn login(
         return err_json(StatusCode::UNAUTHORIZED, "invalid credentials", None).into_response();
     }
 
-    // Create access token
     let (access_token, access_exp) = match create_access_token(&cfg.jwt_access_secret, row.id, cfg.access_token_ttl.as_secs() as i64) {
         Ok(t) => t,
         Err(e) => return err_json(StatusCode::INTERNAL_SERVER_ERROR, "jwt error", Some(e.to_string())).into_response(),
     };
 
-    // Create refresh token
     let refresh_token = Uuid::new_v4().to_string();
     let expires_at = Utc::now() + Duration::from_std(cfg.refresh_token_ttl).unwrap_or_else(|_| Duration::hours(24));
     let expires_at_ts = expires_at.timestamp();
 
-    // Save session to Redis
-    let session = RedisSession {
-        user_id: row.id,
-        expires_at: expires_at_ts,
-    };
-
+    let session = RedisSession { user_id: row.id, expires_at: expires_at_ts };
     let key = format!("refresh_token:{}", refresh_token);
     let value = serde_json::to_string(&session).unwrap();
-    let ttl_secs = cfg.refresh_token_ttl.as_secs(); // ← u64, без as usize!
+    let ttl_secs = cfg.refresh_token_ttl.as_secs();
 
     match redis.get_connection() {
-    Ok(mut conn) => {
-        let _: () = conn.set_ex(&key, &value, ttl_secs)
-            .map_err(|e| {
+        Ok(mut conn) => {
+            let _: () = conn.set_ex(&key, &value, ttl_secs).unwrap_or_else(|e| {
                 error!("Redis set error: {:?}", e);
-                err_json(StatusCode::INTERNAL_SERVER_ERROR, "session storage failed", Some(e.to_string()))
-            }).expect("REASON");
-    },
-    Err(e) => {
-        error!("Redis connection error: {:?}", e);
-        return err_json(StatusCode::INTERNAL_SERVER_ERROR, "session storage failed", Some(e.to_string())).into_response();
+                panic!("session storage failed")
+            });
+        },
+        Err(e) => {
+            error!("Redis connection error: {:?}", e);
+            return err_json(StatusCode::INTERNAL_SERVER_ERROR, "session storage failed", Some(e.to_string())).into_response();
+        }
     }
-}
 
     info!(user = %row.id, "user logged in");
 
@@ -240,59 +231,41 @@ pub async fn refresh_token(
     let session: RedisSession = match session_json {
         Some(json) => match serde_json::from_str(&json) {
             Ok(s) => s,
-            Err(e) => {
-                error!("Redis session parse error: {:?}", e);
-                return err_json(StatusCode::UNAUTHORIZED, "invalid session", None).into_response();
-            }
+            Err(_) => return err_json(StatusCode::UNAUTHORIZED, "invalid session", None).into_response(),
         },
         None => return err_json(StatusCode::UNAUTHORIZED, "invalid refresh token", None).into_response(),
     };
 
     if session.expires_at <= Utc::now().timestamp() {
-        // Delete expired token
         if let Ok(mut conn) = redis.get_connection() {
             let _ = conn.del::<&str, ()>(&key);
         }
         return err_json(StatusCode::UNAUTHORIZED, "refresh token expired", None).into_response();
     }
 
-    // Create new access token
     let (access_token, access_exp) = match create_access_token(&cfg.jwt_access_secret, session.user_id, cfg.access_token_ttl.as_secs() as i64) {
         Ok(t) => t,
         Err(e) => return err_json(StatusCode::INTERNAL_SERVER_ERROR, "jwt error", Some(e.to_string())).into_response(),
     };
 
-    // Create new refresh token
     let new_refresh_token = Uuid::new_v4().to_string();
     let new_expires_at = Utc::now() + Duration::from_std(cfg.refresh_token_ttl).unwrap_or_else(|_| Duration::hours(24));
     let new_expires_at_ts = new_expires_at.timestamp();
-
-    let new_session = RedisSession {
-        user_id: session.user_id,
-        expires_at: new_expires_at_ts,
-    };
-
+    let new_session = RedisSession { user_id: session.user_id, expires_at: new_expires_at_ts };
     let new_key = format!("refresh_token:{}", new_refresh_token);
     let new_value = serde_json::to_string(&new_session).unwrap();
-    let ttl_secs = cfg.refresh_token_ttl.as_secs(); // ← u64!
+    let ttl_secs = cfg.refresh_token_ttl.as_secs();
 
     match redis.get_connection() {
-    Ok(mut conn) => {
-        // Устанавливаем новый refresh token
-        if let Err(e) = conn.set_ex::<&str, &str, ()>(&new_key, &new_value, ttl_secs) {
-            error!("Redis set error: {:?}", e);
+        Ok(mut conn) => {
+            let _: Result<(), _> = conn.set_ex::<&str, &str, ()>(&new_key, &new_value, ttl_secs);
+            let _: Result<(), _> = conn.del(&key);
+        },
+        Err(e) => {
+            error!("Redis connection error: {:?}", e);
             return err_json(StatusCode::INTERNAL_SERVER_ERROR, "session storage failed", Some(e.to_string())).into_response();
         }
-
-        // Удаляем старый refresh token (ошибку игнорируем)
-        let _: Result<(), _> = conn.del(&key);
-    },
-    Err(e) => {
-        error!("Redis connection error: {:?}", e);
-        return err_json(StatusCode::INTERNAL_SERVER_ERROR, "session storage failed", Some(e.to_string())).into_response();
-    }
-
-};
+    };
 
     (StatusCode::OK, Json(RefreshResponse {
         access_token,
@@ -360,7 +333,6 @@ pub async fn search_users(
     BearerToken(token): BearerToken,
     query: axum::extract::Query<std::collections::HashMap<String, String>>,
 ) -> impl IntoResponse {
-    // Валидация токена
     let decoded = match decode_token(&cfg.jwt_access_secret, &token) {
         Ok(d) => d,
         Err(e) => return err_json(StatusCode::UNAUTHORIZED, "invalid token", Some(e.to_string())).into_response(),
@@ -371,18 +343,11 @@ pub async fn search_users(
         Err(_) => return err_json(StatusCode::UNAUTHORIZED, "invalid token", None).into_response(),
     };
 
-    // Получаем поисковый запрос
     let q = query.get("q").map(|s| s.as_str()).unwrap_or("");
-    if q.is_empty() {
-        return (StatusCode::OK, Json(Vec::<UserSearchResult>::new())).into_response();
-    }
-
-    // Защита от слишком коротких запросов
     if q.len() < 2 {
         return (StatusCode::OK, Json(Vec::<UserSearchResult>::new())).into_response();
     }
 
-    // Ищем пользователей (исключая текущего)
     let users = sqlx::query_as!(
         UserSearchResult,
         r#"

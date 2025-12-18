@@ -1,8 +1,3 @@
-   0.435765625s  INFO prepare_target{force=false package_id=chat-service v0.1.0 (/Users/alexefanov/Desktop/Чат/backend-chat/chat_news) target="chat-service"}: cargo::core::compiler::fingerprint: fingerprint dirty for chat-service v0.1.0 (/Users/alexefanov/Desktop/Чат/backend-chat/chat_news)/Check { test: false }/TargetInner { name: "chat-service", doc: true, ..: with_path("/Users/alexefanov/Desktop/Чат/backend-chat/chat_news/src/main.rs", Edition2021) }
-   0.435932042s  INFO prepare_target{force=false package_id=chat-service v0.1.0 (/Users/alexefanov/Desktop/Чат/backend-chat/chat_news) target="chat-service"}: cargo::core::compiler::fingerprint:     dirty: FsStatusOutdated(Stale)
-   0.492633500s  INFO prepare_target{force=false package_id=chat-service v0.1.0 (/Users/alexefanov/Desktop/Чат/backend-chat/chat_news) target="chat-service"}: cargo::core::compiler::fingerprint: fingerprint dirty for chat-service v0.1.0 (/Users/alexefanov/Desktop/Чат/backend-chat/chat_news)/Check { test: true }/TargetInner { name: "chat-service", doc: true, ..: with_path("/Users/alexefanov/Desktop/Чат/backend-chat/chat_news/src/main.rs", Edition2021) }
-   0.492645292s  INFO prepare_target{force=false package_id=chat-service v0.1.0 (/Users/alexefanov/Desktop/Чат/backend-chat/chat_news) target="chat-service"}: cargo::core::compiler::fingerprint:     dirty: FsStatusOutdated(Stale)
-    Checking chat-service v0.1.0 (/Users/alexefanov/Desktop/Чат/backend-chat/chat_news)
-error: could not compile `chat-service` (bin "chat-service") due to 9 previous errors; 3 warnings emitted
-warning: build failed, waiting for other jobs to finish...
-error: could not compile `chat-service` (bin "chat-service" test) due to 9 previous errors; 3 warnings emitted
+    Blocking waiting for file lock on package cache
+    Blocking waiting for file lock on package cache
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.31s
