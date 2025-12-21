@@ -1,0 +1,41 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        SELECT \n            id, \n            COALESCE(name, email) as \"name!\",\n            email,\n            avatar_url\n        FROM users \n        WHERE id != $1 \n          AND is_active = true\n          AND (\n            email ILIKE '%' || $2 || '%' \n            OR name ILIKE '%' || $2 || '%'\n          )\n        ORDER BY \n            CASE WHEN email ILIKE $2 || '%' THEN 0 ELSE 1 END,\n            created_at DESC\n        LIMIT 20\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 1,
+        "name": "name!",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 2,
+        "name": "email",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 3,
+        "name": "avatar_url",
+        "type_info": "Text"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Uuid",
+        "Text"
+      ]
+    },
+    "nullable": [
+      false,
+      null,
+      false,
+      true
+    ]
+  },
+  "hash": "313d9249e8831038bc167d4cce63a2b4d63c7f429794d99b2005451abe6368cf"
+}

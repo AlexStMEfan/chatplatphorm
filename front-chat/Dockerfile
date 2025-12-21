@@ -1,23 +1,21 @@
-
 FROM node:22.16.0-slim AS build
 
 WORKDIR /usr/app
 
-# Копируем package.json и package-lock.json
+# Кэшируем зависимости
 COPY package*.json ./
-RUN npm install
+RUN npm ci
 
 COPY . .
-
 RUN npm run build
 
-FROM nginx:latest AS runner
+FROM nginx:stable-alpine 
 
-RUN rm /etc/nginx/conf.d/default.conf
+# Копируем ваш конфиг
 COPY docker/nginx/conf.d/default.conf /etc/nginx/conf.d/default.conf
 
-
+# Копируем собранный фронтенд
 COPY --from=build /usr/app/dist /usr/share/nginx/html
 
-EXPOSE 8080
+# Не нужно EXPOSE — он информационный, не влияет на работу
 CMD ["nginx", "-g", "daemon off;"]

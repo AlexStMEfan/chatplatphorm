@@ -1,4 +1,5 @@
 Configuring librdkafka
+using cache file config.cache
 checking for OS or distribution... ok (osx)
 checking for C compiler from CC env... failed
 checking for gcc (by command)... ok
@@ -118,7 +119,6 @@ gcc -MD -MP -gstrict-dwarf -O2 -fPIC -Wall -Wsign-compare -Wfloat-equal -Wpointe
 gcc -MD -MP -gstrict-dwarf -O2 -fPIC -Wall -Wsign-compare -Wfloat-equal -Wpointer-arith -Wcast-align -I.  -c crc32c.c -o crc32c.o
 gcc -MD -MP -gstrict-dwarf -O2 -fPIC -Wall -Wsign-compare -Wfloat-equal -Wpointer-arith -Wcast-align -I.  -c rdmurmur2.c -o rdmurmur2.o
 gcc -MD -MP -gstrict-dwarf -O2 -fPIC -Wall -Wsign-compare -Wfloat-equal -Wpointer-arith -Wcast-align -I.  -c rdfnv1a.c -o rdfnv1a.o
-gcc -MD -MP -gstrict-dwarf -O2 -fPIC -Wall -Wsign-compare -Wfloat-equal -Wpointer-arith -Wcast-align -I.  -c cJSON.c -o cJSON.o
 gcc -MD -MP -gstrict-dwarf -O2 -fPIC -Wall -Wsign-compare -Wfloat-equal -Wpointer-arith -Wcast-align -I.  -c rdaddr.c -o rdaddr.o
 gcc -MD -MP -gstrict-dwarf -O2 -fPIC -Wall -Wsign-compare -Wfloat-equal -Wpointer-arith -Wcast-align -I.  -c rdrand.c -o rdrand.o
 gcc -MD -MP -gstrict-dwarf -O2 -fPIC -Wall -Wsign-compare -Wfloat-equal -Wpointer-arith -Wcast-align -I.  -c rdlist.c -o rdlist.o
@@ -158,20 +158,10 @@ gcc -MD -MP -gstrict-dwarf -O2 -fPIC -Wall -Wsign-compare -Wfloat-equal -Wpointe
 gcc -MD -MP -gstrict-dwarf -O2 -fPIC -Wall -Wsign-compare -Wfloat-equal -Wpointer-arith -Wcast-align -I.  -c rdkafka_telemetry.c -o rdkafka_telemetry.o
 gcc -MD -MP -gstrict-dwarf -O2 -fPIC -Wall -Wsign-compare -Wfloat-equal -Wpointer-arith -Wcast-align -I.  -c rdkafka_telemetry_encode.c -o rdkafka_telemetry_encode.o
 gcc -MD -MP -gstrict-dwarf -O2 -fPIC -Wall -Wsign-compare -Wfloat-equal -Wpointer-arith -Wcast-align -I.  -c rdkafka_telemetry_decode.c -o rdkafka_telemetry_decode.o
-gcc -MD -MP -gstrict-dwarf -O2 -fPIC -Wall -Wsign-compare -Wfloat-equal -Wpointer-arith -Wcast-align -I.  -c nanopb/pb_encode.c -o nanopb/pb_encode.o
-gcc -MD -MP -gstrict-dwarf -O2 -fPIC -Wall -Wsign-compare -Wfloat-equal -Wpointer-arith -Wcast-align -I.  -c nanopb/pb_decode.c -o nanopb/pb_decode.o
-gcc -MD -MP -gstrict-dwarf -O2 -fPIC -Wall -Wsign-compare -Wfloat-equal -Wpointer-arith -Wcast-align -I.  -c nanopb/pb_common.c -o nanopb/pb_common.o
-gcc -MD -MP -gstrict-dwarf -O2 -fPIC -Wall -Wsign-compare -Wfloat-equal -Wpointer-arith -Wcast-align -I.  -c opentelemetry/metrics.pb.c -o opentelemetry/metrics.pb.o
-gcc -MD -MP -gstrict-dwarf -O2 -fPIC -Wall -Wsign-compare -Wfloat-equal -Wpointer-arith -Wcast-align -I.  -c opentelemetry/common.pb.c -o opentelemetry/common.pb.o
-gcc -MD -MP -gstrict-dwarf -O2 -fPIC -Wall -Wsign-compare -Wfloat-equal -Wpointer-arith -Wcast-align -I.  -c opentelemetry/resource.pb.c -o opentelemetry/resource.pb.o
 gcc -MD -MP -gstrict-dwarf -O2 -fPIC -Wall -Wsign-compare -Wfloat-equal -Wpointer-arith -Wcast-align -I.  -c snappy.c -o snappy.o
 gcc -MD -MP -gstrict-dwarf -O2 -fPIC -Wall -Wsign-compare -Wfloat-equal -Wpointer-arith -Wcast-align -I.  -c rdgz.c -o rdgz.o
 gcc -MD -MP -gstrict-dwarf -O2 -fPIC -Wall -Wsign-compare -Wfloat-equal -Wpointer-arith -Wcast-align -I.  -c rdhdrhistogram.c -o rdhdrhistogram.o
 gcc -MD -MP -gstrict-dwarf -O2 -fPIC -Wall -Wsign-compare -Wfloat-equal -Wpointer-arith -Wcast-align -I.  -c rdkafka_lz4.c -o rdkafka_lz4.o
-gcc -MD -MP -gstrict-dwarf -O2 -fPIC -Wall -Wsign-compare -Wfloat-equal -Wpointer-arith -Wcast-align -I.  -O3 -c rdxxhash.c -o rdxxhash.o
-gcc -MD -MP -gstrict-dwarf -O2 -fPIC -Wall -Wsign-compare -Wfloat-equal -Wpointer-arith -Wcast-align -I.  -O3 -c lz4.c -o lz4.o
-gcc -MD -MP -gstrict-dwarf -O2 -fPIC -Wall -Wsign-compare -Wfloat-equal -Wpointer-arith -Wcast-align -I.  -O3 -c lz4frame.c -o lz4frame.o
-gcc -MD -MP -gstrict-dwarf -O2 -fPIC -Wall -Wsign-compare -Wfloat-equal -Wpointer-arith -Wcast-align -I.  -O3 -c lz4hc.c -o lz4hc.o
 gcc -MD -MP -gstrict-dwarf -O2 -fPIC -Wall -Wsign-compare -Wfloat-equal -Wpointer-arith -Wcast-align -I.  -c rddl.c -o rddl.o
 gcc -MD -MP -gstrict-dwarf -O2 -fPIC -Wall -Wsign-compare -Wfloat-equal -Wpointer-arith -Wcast-align -I.  -c rdkafka_plugin.c -o rdkafka_plugin.o
 Generating pkg-config file rdkafka.pc
@@ -179,14 +169,14 @@ Creating shared library librdkafka.1.dylib
 gcc  -shared -dynamiclib -Wl,-install_name,/usr/local/lib/librdkafka.1.dylib rdkafka.o rdkafka_broker.o rdkafka_msg.o rdkafka_topic.o rdkafka_conf.o rdkafka_timer.o rdkafka_offset.o rdkafka_transport.o rdkafka_buf.o rdkafka_queue.o rdkafka_op.o rdkafka_request.o rdkafka_cgrp.o rdkafka_pattern.o rdkafka_partition.o rdkafka_subscription.o rdkafka_assignment.o rdkafka_assignor.o rdkafka_range_assignor.o rdkafka_roundrobin_assignor.o rdkafka_sticky_assignor.o rdkafka_feature.o rdcrc32.o crc32c.o rdmurmur2.o rdfnv1a.o cJSON.o rdaddr.o rdrand.o rdlist.o tinycthread.o tinycthread_extra.o rdlog.o rdstring.o rdkafka_event.o rdkafka_metadata.o rdregex.o rdports.o rdkafka_metadata_cache.o rdavl.o rdkafka_sasl.o rdkafka_sasl_plain.o rdkafka_interceptor.o rdkafka_msgset_writer.o rdkafka_msgset_reader.o rdkafka_header.o rdkafka_admin.o rdkafka_aux.o rdkafka_background.o rdkafka_idempotence.o rdkafka_cert.o rdkafka_txnmgr.o rdkafka_coord.o rdbase64.o rdvarint.o rdbuf.o rdmap.o rdunittest.o rdkafka_mock.o rdkafka_mock_handlers.o rdkafka_mock_cgrp.o rdkafka_error.o rdkafka_fetcher.o rdkafka_telemetry.o rdkafka_telemetry_encode.o rdkafka_telemetry_decode.o nanopb/pb_encode.o nanopb/pb_decode.o nanopb/pb_common.o opentelemetry/metrics.pb.o opentelemetry/common.pb.o opentelemetry/resource.pb.o snappy.o rdgz.o rdhdrhistogram.o rdkafka_lz4.o rdxxhash.o lz4.o lz4frame.o lz4hc.o rddl.o rdkafka_plugin.o -o librdkafka.1.dylib -lm -lz -ldl -lpthread
 Creating static library librdkafka.a
 ar rcs librdkafka.a rdkafka.o rdkafka_broker.o rdkafka_msg.o rdkafka_topic.o rdkafka_conf.o rdkafka_timer.o rdkafka_offset.o rdkafka_transport.o rdkafka_buf.o rdkafka_queue.o rdkafka_op.o rdkafka_request.o rdkafka_cgrp.o rdkafka_pattern.o rdkafka_partition.o rdkafka_subscription.o rdkafka_assignment.o rdkafka_assignor.o rdkafka_range_assignor.o rdkafka_roundrobin_assignor.o rdkafka_sticky_assignor.o rdkafka_feature.o rdcrc32.o crc32c.o rdmurmur2.o rdfnv1a.o cJSON.o rdaddr.o rdrand.o rdlist.o tinycthread.o tinycthread_extra.o rdlog.o rdstring.o rdkafka_event.o rdkafka_metadata.o rdregex.o rdports.o rdkafka_metadata_cache.o rdavl.o rdkafka_sasl.o rdkafka_sasl_plain.o rdkafka_interceptor.o rdkafka_msgset_writer.o rdkafka_msgset_reader.o rdkafka_header.o rdkafka_admin.o rdkafka_aux.o rdkafka_background.o rdkafka_idempotence.o rdkafka_cert.o rdkafka_txnmgr.o rdkafka_coord.o rdbase64.o rdvarint.o rdbuf.o rdmap.o rdunittest.o rdkafka_mock.o rdkafka_mock_handlers.o rdkafka_mock_cgrp.o rdkafka_error.o rdkafka_fetcher.o rdkafka_telemetry.o rdkafka_telemetry_encode.o rdkafka_telemetry_decode.o nanopb/pb_encode.o nanopb/pb_decode.o nanopb/pb_common.o opentelemetry/metrics.pb.o opentelemetry/common.pb.o opentelemetry/resource.pb.o snappy.o rdgz.o rdhdrhistogram.o rdkafka_lz4.o rdxxhash.o lz4.o lz4frame.o lz4hc.o rddl.o rdkafka_plugin.o
-cp librdkafka.a librdkafka-dbg.a
-WARNING: librdkafka-static.a: No static libraries available/enabled for inclusion in self-contained static library librdkafka-static.a: this library will be identical to librdkafka.a
 cp librdkafka.1.dylib librdkafka-dbg.1.dylib
+cp librdkafka.a librdkafka-dbg.a
+Creating librdkafka.dylib symlink
+rm -f "librdkafka.dylib" && ln -s "librdkafka.1.dylib" "librdkafka.dylib"
+WARNING: librdkafka-static.a: No static libraries available/enabled for inclusion in self-contained static library librdkafka-static.a: this library will be identical to librdkafka.a
 WARNING: librdkafka-static.a: The following libraries were not available as static libraries and need to be linked dynamically: -lm -lz -ldl -lpthread
 cp librdkafka.a librdkafka-static.a
 cp librdkafka-dbg.a librdkafka-static-dbg.a
-Creating librdkafka.dylib symlink
-rm -f "librdkafka.dylib" && ln -s "librdkafka.1.dylib" "librdkafka.dylib"
 cp librdkafka-static.a librdkafka-static-dbg.a
 Generating pkg-config file rdkafka-static.pc
 Checking librdkafka integrity
@@ -207,10 +197,10 @@ g++ -MD -MP -gstrict-dwarf -O2 -fPIC -Wall -Wsign-compare -Wfloat-equal -Wpointe
 g++ -MD -MP -gstrict-dwarf -O2 -fPIC -Wall -Wsign-compare -Wfloat-equal -Wpointer-arith -Wcast-align -Wno-non-virtual-dtor -c MetadataImpl.cpp -o MetadataImpl.o
 Generating pkg-config file rdkafka++.pc
 Generating pkg-config file rdkafka++-static.pc
-Creating static library librdkafka++.a
 Creating shared library librdkafka++.1.dylib
-ar rcs librdkafka++.a RdKafka.o ConfImpl.o HandleImpl.o ConsumerImpl.o ProducerImpl.o KafkaConsumerImpl.o TopicImpl.o TopicPartitionImpl.o MessageImpl.o HeadersImpl.o QueueImpl.o MetadataImpl.o
+Creating static library librdkafka++.a
 g++  -shared -dynamiclib -Wl,-install_name,/usr/local/lib/librdkafka++.1.dylib RdKafka.o ConfImpl.o HandleImpl.o ConsumerImpl.o ProducerImpl.o KafkaConsumerImpl.o TopicImpl.o TopicPartitionImpl.o MessageImpl.o HeadersImpl.o QueueImpl.o MetadataImpl.o -o librdkafka++.1.dylib -L../src -lrdkafka
+ar rcs librdkafka++.a RdKafka.o ConfImpl.o HandleImpl.o ConsumerImpl.o ProducerImpl.o KafkaConsumerImpl.o TopicImpl.o TopicPartitionImpl.o MessageImpl.o HeadersImpl.o QueueImpl.o MetadataImpl.o
 cp librdkafka++.a librdkafka++-dbg.a
 cp librdkafka++.1.dylib librdkafka++-dbg.1.dylib
 Creating librdkafka++.dylib symlink

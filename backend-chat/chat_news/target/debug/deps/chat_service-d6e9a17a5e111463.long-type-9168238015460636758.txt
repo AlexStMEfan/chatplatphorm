@@ -1,2 +1,0 @@
-fn(WebSocketUpgrade, {type error}, Extension<Arc<AppState>>) -> impl futures_util::Future<Output = impl IntoResponse> {ws_route}
-fn(WebSocketUpgrade, {type error}, Extension<Arc<AppState>>) -> impl futures_util::Future<Output = impl IntoResponse> {ws_route}: Handler<_, _>

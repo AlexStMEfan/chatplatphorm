@@ -1,0 +1,70 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        SELECT id, email, provider, provider_id, name, avatar_url, is_active, created_at, updated_at\n        FROM users\n        WHERE id = $1\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 1,
+        "name": "email",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 2,
+        "name": "provider",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 3,
+        "name": "provider_id",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 4,
+        "name": "name",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 5,
+        "name": "avatar_url",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 6,
+        "name": "is_active",
+        "type_info": "Bool"
+      },
+      {
+        "ordinal": 7,
+        "name": "created_at",
+        "type_info": "Timestamptz"
+      },
+      {
+        "ordinal": 8,
+        "name": "updated_at",
+        "type_info": "Timestamptz"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Uuid"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      true,
+      true,
+      true,
+      false,
+      false,
+      false
+    ]
+  },
+  "hash": "aa177422145e8db5ac46ee1989457a3c4d4712c500beac25650655f2b1adf80d"
+}

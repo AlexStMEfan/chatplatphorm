@@ -7,7 +7,7 @@ import {
   Bell,
   Pin,
   Trash2,
-  X,
+  
 } from "lucide-react";
 
 export type NotificationType =

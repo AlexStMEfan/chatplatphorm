@@ -1,15 +1,14 @@
 // src/websocket/handler.rs
+
 use axum::extract::ws::{WebSocket, Message as WsMessage};
-use futures_util::stream::StreamExt;
+use futures_util::{SinkExt, StreamExt};
 use serde::{Deserialize, Serialize};
+use tokio::sync::mpsc;
+use tracing::{debug, error, info};
 use uuid::Uuid;
 use std::sync::Arc;
-use tracing;
-use futures_util::SinkExt;
-use crate::{
-    AppState,
-    models::ChatEvent,
-};
+
+use crate::{AppState, models::ChatEvent};
 
 #[derive(Deserialize)]
 struct WsCommand {
@@ -28,80 +27,104 @@ pub async fn handle_websocket(
     user_id: Uuid,
     state: Arc<AppState>,
 ) {
-    let (mut sender, mut receiver) = ws.split();
-    
-    // Подписываем пользователя на его чаты
-    let user_chats = state.ws_manager.get_user_chats(user_id).await;
+    // Разделяем WebSocket на отправку и приём
+    let (mut ws_sender, mut ws_receiver) = ws.split();
+
+    // Загружаем чаты пользователя
+    let user_chats = match state.scylla.get_user_chat_ids(user_id).await {
+        Ok(chats) => chats,
+        Err(e) => {
+            error!("Failed to load user chats for {}: {:?}", user_id, e);
+            return;
+        }
+    };
+
+    // Подписываем пользователя на каждый чат
     for chat_id in &user_chats {
-        state.ws_manager.subscribe_user_to_chat(user_id, *chat_id).await;
+        if state.scylla.is_user_in_chat(*chat_id, user_id).await.unwrap_or(false) {
+            state.ws_manager.subscribe_user_to_chat(user_id, *chat_id).await;
+            debug!("User {} subscribed to chat {}", user_id, chat_id);
+        }
     }
-    
-    // Создаём получатель для этой сессии
-    let (tx, mut rx) = tokio::sync::mpsc::channel::<ChatEvent>(32);
-    
-    // Запускаем фоновую задачу для отправки сообщений
-    tokio::spawn(async move {
-        while let Some(event) = rx.recv().await {
-            if let Ok(json) = serde_json::to_string(&WsMessageOut {
-                r#type: "message".to_string(),
+
+    // Канал для получения событий чатов
+    let (event_tx, mut event_rx) = mpsc::channel::<ChatEvent>(32);
+
+    // Запускаем подписку на каждый чат
+    let mut subscription_tasks = Vec::new();
+
+    for chat_id in &user_chats {
+        let mut room_rx = state.ws_manager.subscribe_to_chat(*chat_id).await;
+        let tx = event_tx.clone(); // клонируем для задачи
+
+        let task = tokio::spawn(async move {
+            while let Ok(event) = room_rx.recv().await {
+                if tx.send(event).await.is_err() {
+                    break; // канал закрыт
+                }
+            }
+        });
+
+        subscription_tasks.push(task);
+    }
+
+    // Отправка событий клиенту
+    let send_task = tokio::spawn(async move {
+        while let Some(event) = event_rx.recv().await {
+            let msg = WsMessageOut {
+                r#type: "event".to_string(),
                 payload: event,
-            }) {
-                let _ = sender.send(WsMessage::Text(json)).await;
+            };
+            let payload = match serde_json::to_string(&msg) {
+                Ok(p) => p,
+                Err(e) => {
+                    error!("JSON serialize error: {:?}", e);
+                    continue;
+                }
+            };
+            if ws_sender.send(WsMessage::Text(payload)).await.is_err() {
+                break; // клиент отключился
             }
         }
     });
-    
-    // Подписываемся на все чаты пользователя
-    for chat_id in user_chats {
-        let rooms = state.ws_manager.rooms.read().await;
-        if let Some(room_tx) = rooms.get(&chat_id) {
-            let mut room_rx = room_tx.subscribe();
-            let tx_clone = tx.clone();
-            tokio::spawn(async move {
-                while let Ok(event) = room_rx.recv().await {
-                    let _ = tx_clone.send(event).await;
-                }
-            });
-        }
-    }
-    
-    tracing::info!("WebSocket connected for user {}", user_id);
-    
-    // Обработка входящих сообщений
-    while let Some(result) = receiver.next().await {
+
+    // Обработка входящих сообщений (команд)
+    while let Some(result) = ws_receiver.next().await {
         match result {
             Ok(WsMessage::Text(text)) => {
-                match serde_json::from_str::<WsCommand>(&text) {
-                    Ok(cmd) => {
-                        if cmd.r#type == "subscribe" {
+                if let Ok(cmd) = serde_json::from_str::<WsCommand>(&text) {
+                    if cmd.r#type == "subscribe" {
+                        if state.scylla.is_user_in_chat(cmd.chat_id, user_id).await.unwrap_or(false) {
                             state.ws_manager.subscribe_user_to_chat(user_id, cmd.chat_id).await;
-                            tracing::debug!("User {} subscribed to chat {}", user_id, cmd.chat_id);
-                        } else if cmd.r#type == "unsubscribe" {
-                            state.ws_manager.unsubscribe_user_from_chat(user_id, cmd.chat_id).await;
-                            tracing::debug!("User {} unsubscribed from chat {}", user_id, cmd.chat_id);
-                        } else {
-                            tracing::warn!("Unknown command from user {}: {}", user_id, text);
+                            info!("User {} subscribed to chat {} via command", user_id, cmd.chat_id);
                         }
-                    }
-                    Err(e) => {
-                        tracing::warn!("Failed to parse command: {:?}", e);
                     }
                 }
             }
-            Ok(WsMessage::Binary(_)) | 
-            Ok(WsMessage::Ping(_)) | 
-            Ok(WsMessage::Pong(_)) => {
-                // Игнорируем
-            }
             Ok(WsMessage::Close(_)) => {
+                info!("WebSocket closed by user {}", user_id);
                 break;
             }
             Err(e) => {
-                tracing::error!("WebSocket error for user {}: {:?}", user_id, e);
+                error!("WebSocket receive error: {:?}", e);
                 break;
             }
+            _ => continue,
         }
     }
-    
-    tracing::info!("WebSocket disconnected for user {}", user_id);
+
+    // Отписка от всех чатов при выходе
+    for chat_id in &user_chats {
+        state.ws_manager.unsubscribe_user_from_chat(user_id, *chat_id).await;
+        debug!("User {} unsubscribed from chat {}", user_id, chat_id);
+    }
+
+    // Останавливаем задачи
+    send_task.abort();
+    for task in subscription_tasks {
+        task.abort();
+    }
+
+    // Ждём немного, чтобы задачи завершились
+    tokio::time::sleep(tokio::time::Duration::from_millis(100)).await;
 }

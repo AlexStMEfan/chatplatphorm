@@ -18,9 +18,7 @@ interface LoginResponse {
   refresh_token: string;
 }
 
-interface RefreshRequest {
-  refresh_token: string;
-}
+
 
 export interface User {
   id: string;

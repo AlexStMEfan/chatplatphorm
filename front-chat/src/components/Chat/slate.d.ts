@@ -1,4 +1,4 @@
-import type { BaseEditor, Descendant } from "slate";
+import type { BaseEditor } from "slate";
 import type { ReactEditor } from "slate-react";
 
 export type CustomText = {

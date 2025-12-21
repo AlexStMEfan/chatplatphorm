@@ -7,6 +7,8 @@ rdkafka_broker.c:844:13: warning: variable 'idx' set but not used [-Wunused-but-
 rdkafka.c:5297:47: warning: cast from 'unsigned char *' to 'uint64_t *' (aka 'unsigned long long *') increases required alignment from 1 to 8 [-Wcast-align]
  5297 |         uint64_t *rand_values_uint64        = (uint64_t *)rand_values_bytes;
       |                                               ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 warning generated.
+1 warning generated.
 rdkafka_cgrp.c:1497:58: warning: variable 'ap' is uninitialized when used here [-Wuninitialized]
  1497 |                 rd_kafka_cgrp_consumer_rejoin(rkcg, fmt, ap);
       |                                                          ^~
@@ -26,7 +28,7 @@ rdkafka_request.c:3368:29: warning: format specifies type 'long' but the argumen
 ./rdkafka_int.h:1031:66: note: expanded from macro 'rd_kafka_dbg'
  1031 |                                       (RD_KAFKA_DBG_##ctx), fac, __VA_ARGS__); \
       |                                                                  ^~~~~~~~~~~
-1 warning generated.
+2 warnings generated.
 1 warning generated.
 rdbuf.c:912:16: warning: variable 'remains' set but not used [-Wunused-but-set-variable]
   912 |         size_t remains = size;
@@ -35,7 +37,6 @@ rdmap.c:503:13: warning: variable 'fails' set but not used [-Wunused-but-set-var
   503 |         int fails = 0;
       |             ^
 1 warning generated.
-2 warnings generated.
 1 warning generated.
 rdkafka_telemetry_decode.c:898:13: warning: implicit conversion from enumeration type 'rd_kafka_telemetry_consumer_metric_name_t' to different enumeration type 'rd_kafka_telemetry_producer_metric_name_t' [-Wenum-conversion]
   896 |         fails += unit_test_telemetry(
@@ -121,9 +122,8 @@ rdkafka_telemetry_decode.c:1037:13: warning: implicit conversion from enumeratio
  1036 |             RD_KAFKA_CONSUMER,
  1037 |             RD_KAFKA_TELEMETRY_METRIC_CONSUMER_COORDINATOR_REBALANCE_LATENCY_TOTAL,
       |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-14 warnings generated.
-1 warning generated.
 snappy.c:1440:9: warning: variable 'written' set but not used [-Wunused-but-set-variable]
  1440 |         size_t written = 0;
       |                ^
+14 warnings generated.
 1 warning generated.

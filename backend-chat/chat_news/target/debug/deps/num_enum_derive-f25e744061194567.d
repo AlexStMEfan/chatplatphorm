@@ -1,9 +1,0 @@
-/Users/alexefanov/Desktop/Чат/backend-chat/chat_news/target/debug/deps/num_enum_derive-f25e744061194567.d: /Users/alexefanov/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/num_enum_derive-0.7.5/src/lib.rs /Users/alexefanov/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/num_enum_derive-0.7.5/src/enum_attributes.rs /Users/alexefanov/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/num_enum_derive-0.7.5/src/parsing.rs /Users/alexefanov/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/num_enum_derive-0.7.5/src/utils.rs /Users/alexefanov/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/num_enum_derive-0.7.5/src/variant_attributes.rs
-
-/Users/alexefanov/Desktop/Чат/backend-chat/chat_news/target/debug/deps/libnum_enum_derive-f25e744061194567.dylib: /Users/alexefanov/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/num_enum_derive-0.7.5/src/lib.rs /Users/alexefanov/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/num_enum_derive-0.7.5/src/enum_attributes.rs /Users/alexefanov/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/num_enum_derive-0.7.5/src/parsing.rs /Users/alexefanov/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/num_enum_derive-0.7.5/src/utils.rs /Users/alexefanov/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/num_enum_derive-0.7.5/src/variant_attributes.rs
-
-/Users/alexefanov/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/num_enum_derive-0.7.5/src/lib.rs:
-/Users/alexefanov/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/num_enum_derive-0.7.5/src/enum_attributes.rs:
-/Users/alexefanov/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/num_enum_derive-0.7.5/src/parsing.rs:
-/Users/alexefanov/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/num_enum_derive-0.7.5/src/utils.rs:
-/Users/alexefanov/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/num_enum_derive-0.7.5/src/variant_attributes.rs:

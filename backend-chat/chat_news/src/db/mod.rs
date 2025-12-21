@@ -1,48 +1,36 @@
-use scylla::Session;
-use std::sync::Arc;
-use anyhow::Context;
+// src/db/mod.rs
 
 pub mod messages;
 
+use rdkafka::ClientConfig;
+use crate::config::Config;
+use std::sync::Arc;
+use anyhow::Result;
+
 #[derive(Clone)]
 pub struct Db {
-    pub session: Arc<Session>,
+    pub scylla: messages::ScyllaDb,
+    pub kafka: Arc<rdkafka::producer::FutureProducer>,
 }
 
 impl Db {
-    pub async fn connect(hosts: &[String]) -> anyhow::Result<Self> {
-        // Используем SessionBuilder
-        let session = scylla::SessionBuilder::new()
-            .known_nodes(hosts.to_vec())
-            .build()
+    pub async fn connect(config: &Config) -> Result<Self> {
+        // 1. Scylla
+        let scylla = messages::ScyllaDb::connect(&config.scylla_nodes, &config.scylla_keyspace)
             .await
-            .context("connect to scylla")?;
+            .map_err(|e| anyhow::anyhow!("Scylla connect error: {}", e))?;
 
-        // Создаём keyspace и таблицу
-        session
-            .query(
-                "CREATE KEYSPACE IF NOT EXISTS chat \
-                 WITH replication = {'class': 'SimpleStrategy', 'replication_factor': 1}",
-                &[],
-            )
-            .await?;
+        // 2. Kafka
+        let kafka = ClientConfig::new()
+            .set("bootstrap.servers", &config.kafka_brokers) // ✅ &Vec<String> → join
+            .set("message.timeout.ms", "5000")
+            .create::<rdkafka::producer::FutureProducer>()
+            .map_err(|e| anyhow::anyhow!("Kafka producer create error: {}", e))?;
 
-        session
-            .query(
-                "CREATE TABLE IF NOT EXISTS chat.messages (
-                    chat_id uuid,
-                    message_id uuid,
-                    user_id uuid,
-                    content text,
-                    created_at timestamp,
-                    PRIMARY KEY (chat_id, message_id)
-                )",
-                &[],
-            )
-            .await?;
+        let kafka = Arc::new(kafka);
 
-        Ok(Self {
-            session: Arc::new(session),
-        })
+        Ok(Db { scylla, kafka })
     }
 }
+
+pub use messages::{ScyllaDb};

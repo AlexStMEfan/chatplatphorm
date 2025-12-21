@@ -1,2 +1,0 @@
-fn(axum::extract::Path<uuid::Uuid>, axum::extract::State<AppState>, {type error}) -> impl std::future::Future<Output = std::result::Result<axum::Json<Vec<models::Message>>, AppError>> {get_history}
-fn(axum::extract::Path<uuid::Uuid>, axum::extract::State<AppState>, {type error}) -> impl std::future::Future<Output = std::result::Result<axum::Json<Vec<models::Message>>, AppError>> {get_history}: Handler<_, _>

@@ -1,8 +1,12 @@
+// src/kafka/producer.rs
+
 use rdkafka::producer::{FutureProducer, FutureRecord};
 use rdkafka::util::Timeout;
 use std::time::Duration;
-use tracing::error;
+use tracing::{info, error};
 use anyhow::Result;
+use serde_json::to_string;
+
 use crate::models::ChatEvent;
 
 pub struct KafkaProducer {
@@ -11,13 +15,11 @@ pub struct KafkaProducer {
 }
 
 impl KafkaProducer {
-    /// Создает нового KafkaProducer с заданными брокерами и топиком
     pub fn new(brokers: &str, topic: &str) -> Result<Self> {
-        use rdkafka::ClientConfig;
-
-        let producer: FutureProducer = ClientConfig::new()
+        let producer = rdkafka::ClientConfig::new()
             .set("bootstrap.servers", brokers)
             .set("message.timeout.ms", "5000")
+            .set("enable.idempotence", "true")
             .create()?;
 
         Ok(Self {
@@ -26,22 +28,36 @@ impl KafkaProducer {
         })
     }
 
-    /// Отправляет сообщение в Kafka
-    pub async fn send_message(&self, ev: &ChatEvent) -> Result<()> {
-        let payload = serde_json::to_string(ev)?;
-        let key = ev.chat_id.to_string();
+    pub async fn send(&self, event: &ChatEvent) -> Result<()> {
+        let payload = to_string(event)
+            .map_err(|e| anyhow::anyhow!("Failed to serialize ChatEvent: {}", e))?;
 
+        let key = event.chat_id.to_string();
+
+        // ✅ Исправлено: убрали .timestamp() — rdkafka сам ставит timestamp
         let record = FutureRecord::to(&self.topic)
             .payload(&payload)
             .key(&key);
 
-        // Отправка и ожидание до 5 секунд
         match self.inner.send(record, Timeout::After(Duration::from_secs(5))).await {
-            Ok((_partition, _offset)) => Ok(()),
-            Err((kafka_err, _msg)) => {
-                error!("Kafka delivery error: {:?}", kafka_err);
-                Err(anyhow::anyhow!("Kafka delivery error"))
+            Ok((partition, offset)) => {
+                info!("Event sent to topic={} partition={} offset={} chat_id={}",
+                      self.topic, partition, offset, event.chat_id);
+                Ok(())
             }
+            Err((kafka_err, _msg)) => {
+                error!("Kafka send failed: {:?}", kafka_err);
+                Err(anyhow::anyhow!("Kafka delivery failed: {}", kafka_err))
+            }
+        }
+    }
+}
+
+impl Clone for KafkaProducer {
+    fn clone(&self) -> Self {
+        Self {
+            inner: self.inner.clone(),
+            topic: self.topic.clone(),
         }
     }
 }

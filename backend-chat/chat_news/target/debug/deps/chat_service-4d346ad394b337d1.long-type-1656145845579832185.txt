@@ -1,2 +1,0 @@
-fn(axum::extract::State<AppState>, {type error}, axum::Json<SendMessageRequest>) -> impl std::future::Future<Output = std::result::Result<axum::Json<SendMessageResponse>, impl IntoResponse>> {send_message}
-fn(axum::extract::State<AppState>, {type error}, axum::Json<SendMessageRequest>) -> impl std::future::Future<Output = std::result::Result<axum::Json<SendMessageResponse>, impl IntoResponse>> {send_message}: Handler<_, _>

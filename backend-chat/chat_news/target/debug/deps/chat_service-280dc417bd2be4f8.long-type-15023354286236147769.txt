@@ -1,2 +1,0 @@
-fn(WebSocketUpgrade, TypedHeader<Authorization<Bearer>>, Extension<Arc<AppState>>) -> impl futures_util::Future<Output = std::result::Result<impl IntoResponse, anyhow::Error>> {ws_route}
-fn(WebSocketUpgrade, TypedHeader<Authorization<Bearer>>, Extension<Arc<AppState>>) -> impl futures_util::Future<Output = std::result::Result<impl IntoResponse, anyhow::Error>> {ws_route}: Handler<_, _>

@@ -88,3 +88,22 @@ export interface ReadByUser {
   id: string;
   avatar?: string;
 }
+
+export interface ChatEvent {
+  type: 'message' | 'reaction' | 'read';
+  message_id: string;
+  chat_id: string;
+  user_id: string;
+  content?: string;
+  media_urls?: string[];
+  media_meta?: {
+    name?: string;
+    size?: number;
+    type?: string;
+    messageType?: string;
+    // ... другие поля, которые могут быть
+  };
+  created_at: string;
+  edited_at?: string;
+  is_deleted?: boolean;
+}

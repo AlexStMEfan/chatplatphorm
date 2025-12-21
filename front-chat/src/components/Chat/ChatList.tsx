@@ -90,7 +90,7 @@ export default function ChatList({ chats, activeChatId, setActiveChatId, onChatC
   useEffect(() => {
     debouncedSearch(searchQuery);
     return () => debouncedSearch.cancel();
-  }, [searchQuery]);
+  }, [debouncedSearch, searchQuery]);
 
   /* ---------------- Create new chat ---------------- */
   const handleSelectUser = (user: UserSearchResult) => {

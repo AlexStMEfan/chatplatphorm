@@ -1,21 +1,19 @@
 import { defineConfig } from 'vite'
 import tailwindcss from '@tailwindcss/vite'
 
-// https://vite.dev/config/
 export default defineConfig({
   base: "/",
   plugins: [
     tailwindcss(),
   ],
   preview: {
-    port: 8080,
+    port: 5173,        // ← стандартный порт Vite
     strictPort: true,
   },
   server: {
-    port: 8080,
+    port: 5173,        // ← не 80!
     strictPort: true,
-    host: true,
-    origin: "http://localhost:8080",
+    host: true,        // ← OK, чтобы был доступен извне контейнера
+    // origin можно убрать — Vite сам определит
   },
-
 })

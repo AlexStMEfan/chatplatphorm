@@ -1,87 +1,144 @@
 import { motion } from "framer-motion";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useMemo } from "react";
 import { Star, StarOff, Folder, FileText, Heart, Share2 } from "lucide-react";
 import "@blocknote/core/fonts/inter.css";
 import { BlockNoteView } from "@blocknote/mantine";
 import "@blocknote/mantine/style.css";
 import { useCreateBlockNote } from "@blocknote/react";
 
+// ✅ Импортируем Block как тип — важно при verbatimModuleSyntax / isolatedModules
+import type { Block as BlockNoteBlock } from "@blocknote/core";
+
+// Интерфейс страницы новостей
 interface NewsPage {
   id: string;
   title: string;
   favorite: boolean;
   tags?: string[];
   children?: NewsPage[];
-  content?: any[];
+  content?: BlockNoteBlock[]; // ✅ Используем тип из BlockNote
+  searchText?: string;
 }
 
-// Пример данных с тегами
 const mockPages: NewsPage[] = [
   {
-    id: "1",
-    title: "Объявления компании",
+    id: "1-1",
+    title: "Новая политика отпуска 2025",
+    favorite: false,
+    tags: ["HR", "Отпуск"],
+    searchText: "Компания обновила правила отпуска. Теперь сотрудники могут планировать...",
+    content: [
+      {
+        type: "paragraph",
+        id: "block-1",
+        props: {
+          textColor: "default",
+          backgroundColor: "default",
+          textAlignment: "left", // ✅ Обязательно
+        },
+        content: [
+          {
+            type: "text",
+            text: "Компания обновила правила отпуска. Теперь сотрудники могут планировать отпуск гибче и заранее. ",
+            styles: {},
+          },
+          {
+            type: "text",
+            text: "Основные изменения: увеличен базовый отпуск до 28 дней, добавлена возможность деления на части без ограничений.",
+            styles: {
+              bold: true,
+            },
+          },
+        ],
+        children: [], // ✅ Обязательно!
+      },
+      {
+        type: "heading",
+        id: "block-2",
+        props: {
+          level: 3,
+          textColor: "default",
+          backgroundColor: "default",
+          textAlignment: "left", // ✅ Добавлено!
+        },
+        content: [
+          {
+            type: "text",
+            text: "Как подать заявление",
+            styles: {},
+          },
+        ],
+        children: [], // ✅
+      },
+      {
+        type: "bulletListItem",
+        id: "block-3",
+        props: {
+          textColor: "default",
+          backgroundColor: "default",
+          textAlignment: "left", // ✅
+        },
+        content: [
+          {
+            type: "text",
+            text: "Через HR-систему",
+            styles: {},
+          },
+        ],
+        children: [], // ✅
+      },
+      {
+        type: "bulletListItem",
+        id: "block-4",
+        props: {
+          textColor: "default",
+          backgroundColor: "default",
+          textAlignment: "left", // ✅
+        },
+        content: [
+          {
+            type: "text",
+            text: "Не позднее чем за 14 дней до начала",
+            styles: {},
+          },
+        ],
+        children: [], // ✅
+      },
+    ],
+  },
+  {
+    id: "1-2",
+    title: "Корпоративный пикник 2025",
     favorite: true,
-    tags: ["Важное", "HR"],
-    children: [
+    tags: ["Событие", "Команда"],
+    searchText: "Летний пикник для всех сотрудников пройдёт 12 июля на берегу озера.",
+    content: [
       {
-        id: "1-1",
-        title: "Новая политика отпуска 2025",
-        favorite: false,
-        tags: ["HR", "Отпуск"],
+        type: "paragraph",
+        id: "block-5",
+        props: {
+          textColor: "default",
+          backgroundColor: "default",
+          textAlignment: "left", // ✅
+        },
         content: [
           {
-            type: "paragraph",
-            content: [
-              { type: "text", text: "Компания обновила правила отпуска. Теперь сотрудники могут планировать...", styles: {} },
-            ],
+            type: "text",
+            text: "Ждём всех на ежегодный корпоративный пикник ",
+            styles: {},
           },
-        ],
-      },
-      {
-        id: "1-2",
-        title: "Открыта вакансия Senior Rust Engineer",
-        favorite: false,
-        tags: ["Вакансии", "Rust"],
-        content: [
           {
-            type: "paragraph",
-            content: [
-              { type: "text", text: "В связи с ростом проекта Formator открыта вакансия на Rust инженера...", styles: {} },
-            ],
+            type: "text",
+            text: "Будет музыка, еда, игры и розыгрыши призов.",
+            styles: { italic: true },
           },
         ],
+        children: [], // ✅
       },
     ],
-  },
-  {
-    id: "2",
-    title: "Новости продуктов",
-    favorite: false,
-    tags: ["Продукты"],
-    children: [
-      {
-        id: "2-1",
-        title: "Вышел Formator 1.0",
-        favorite: false,
-        tags: ["Продукты", "Релиз"],
-        content: [
-          {
-            type: "paragraph",
-            content: [
-              { type: "text", text: "Запущена первая версия Formator — мультиплатформенного редактора UI...", styles: {} },
-            ],
-          },
-        ],
-      },
-    ],
-  },
-  {
-    id: "3",
-    title: "Командные обновления",
-    favorite: false,
-    tags: ["Команда"],
   },
 ];
+
 
 export default function WindowNews() {
   const [pages, setPages] = useState<NewsPage[]>(mockPages);
@@ -91,18 +148,12 @@ export default function WindowNews() {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTags, setActiveTags] = useState<string[]>([]);
 
-  // Редактор создаётся один раз
+  // ✅ Редактор корректно получает initialContent
   const editor = useCreateBlockNote({
-    initialContent: [{ type: "paragraph", content: [] }],
+    initialContent: activeSubpage?.content || [],
   });
 
-  useEffect(() => {
-    if (!activeSubpage?.content) return;
-    const firstBlock = editor.getBlock(0);
-    if (!firstBlock) return;
-    editor.updateBlock(firstBlock.id, { content: activeSubpage.content });
-  }, [activeSubpage, editor]);
-
+  // Переключение избранного
   const toggleFavorite = (page: NewsPage) => {
     const update = (items: NewsPage[]): NewsPage[] =>
       items.map((p) => {
@@ -113,7 +164,7 @@ export default function WindowNews() {
     setPages(update(pages));
   };
 
-  // Получаем все уникальные теги
+  // Сбор всех уникальных тегов
   const allTags = useMemo(() => {
     const tags: string[] = [];
     const collect = (items: NewsPage[]) => {
@@ -128,22 +179,21 @@ export default function WindowNews() {
     return tags;
   }, [pages]);
 
-  // Фильтр страниц по тегам и поиску
+  // Фильтрация страниц по поиску и тегам
   const filteredPages = useMemo(() => {
     const filterItems = (items: NewsPage[]): NewsPage[] => {
       return items
         .map((p) => {
           let children: NewsPage[] | undefined;
           if (p.children) children = filterItems(p.children);
+
           const matchesSearch =
             p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            p.content?.some((block) =>
-              block.content?.some((text: any) =>
-                text.text?.toLowerCase().includes(searchQuery.toLowerCase())
-              )
-            );
+            (p.searchText?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false);
+
           const matchesTags =
             activeTags.length === 0 || p.tags?.some((t) => activeTags.includes(t));
+
           if ((matchesSearch && matchesTags) || (children && children.length > 0)) {
             return { ...p, children };
           }
@@ -154,6 +204,7 @@ export default function WindowNews() {
     return filterItems(pages);
   }, [pages, searchQuery, activeTags]);
 
+  // Рендер дерева страниц
   const renderPages = (items: NewsPage[], level = 0) =>
     items.map((p) => (
       <div key={p.id}>
@@ -163,7 +214,10 @@ export default function WindowNews() {
             if (!p.children) setActiveSubpage(p);
           }}
           className={`group flex items-center justify-between px-3 py-2 rounded-xl cursor-pointer
-            ${activePage?.id === p.id ? "bg-primary/10 border border-primary/30" : "hover:bg-gray-100 dark:hover:bg-dark-input"}
+            ${activePage?.id === p.id
+              ? "bg-primary/10 border border-primary/30"
+              : "hover:bg-gray-100 dark:hover:bg-dark-input"
+            }
           `}
           style={{ marginLeft: level * 12 }}
         >
@@ -202,7 +256,7 @@ export default function WindowNews() {
       exit={{ opacity: 0 }}
       transition={{ duration: 0.3 }}
     >
-      {/* LEFT SIDEBAR */}
+      {/* ЛЕВАЯ ПАНЕЛЬ — навигация */}
       <aside className="w-64 border-r border-border dark:border-dark-border p-4 overflow-auto flex flex-col">
         <div className="text-sm font-semibold text-text-muted dark:text-dark-text-muted mb-3">
           Новости
@@ -217,7 +271,7 @@ export default function WindowNews() {
           onChange={(e) => setSearchQuery(e.target.value)}
         />
 
-        {/* Фильтр по тегам */}
+        {/* Фильтры по тегам */}
         <div className="mb-3 flex flex-wrap gap-2">
           {allTags.map((tag) => (
             <button
@@ -242,7 +296,7 @@ export default function WindowNews() {
         <div className="flex-1 overflow-auto">{renderPages(filteredPages)}</div>
       </aside>
 
-      {/* RIGHT CONTENT */}
+      {/* ПРАВАЯ ПАНЕЛЬ — контент */}
       <div className="flex-1 p-6 overflow-auto">
         {!activeSubpage ? (
           <div className="text-center text-text-muted dark:text-dark-text-muted mt-20">
@@ -271,6 +325,7 @@ export default function WindowNews() {
               </button>
             </div>
 
+            {/* Редактор BlockNote */}
             <div className="prose dark:prose-invert max-w-none text-text-dark dark:text-dark-text">
               <BlockNoteView editor={editor} />
             </div>
