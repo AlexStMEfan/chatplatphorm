@@ -1,2 +1,0 @@
-fn(State<Pool<Postgres>>, {type error}) -> impl std::future::Future<Output = impl IntoResponse> {refresh_session}
-fn(State<Pool<Postgres>>, {type error}) -> impl std::future::Future<Output = impl IntoResponse> {refresh_session}: Handler<_, _>

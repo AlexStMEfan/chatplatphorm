@@ -1,2 +1,0 @@
-fn(axum::Json<RegisterInput>, Extension<Pool<Postgres>>) -> impl std::future::Future<Output = impl IntoResponse> {auth::register}
-fn(axum::Json<RegisterInput>, Extension<Pool<Postgres>>) -> impl std::future::Future<Output = impl IntoResponse> {auth::register}: Handler<_, _>

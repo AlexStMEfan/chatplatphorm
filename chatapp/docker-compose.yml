@@ -1,0 +1,119 @@
+# docker-compose.yml
+services:
+  postgres:
+    image: postgres:16
+    container_name: auth-postgres
+    networks:
+      - app-net
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: jj5x4H4!
+      POSTGRES_DB: auth_db
+    volumes:
+      - pg/var/lib/postgresql/data
+    restart: unless-stopped
+
+  redis:
+    image: redis:7.4
+    container_name: redis
+    networks:
+      - app-net
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+
+  kafka:
+    image: apache/kafka:3.7.1
+    container_name: kafka
+    networks:
+      - app-net
+    ports:
+      - "9092:9092"
+    environment:
+      CLUSTER_ID: "kRaftClusterID1234567890ab"
+    volumes:
+      - kafka-/opt/kafka/data
+    command: |
+      sh -c "
+        /opt/kafka/bin/kafka-storage.sh format -t $$CLUSTER_ID -c /opt/kafka/config/kraft/server.properties &&
+        sed -i 's/#listeners=PLAINTEXT:\/\/:9092/listeners=PLAINTEXT:\/\/:9092/g' /opt/kafka/config/kraft/server.properties &&
+        sed -i 's/#advertised.listeners=PLAINTEXT:\/\/your.host.name:9092/advertised.listeners=PLAINTEXT:\/\/localhost:9092/g' /opt/kafka/config/kraft/server.properties &&
+        exec /opt/kafka/bin/kafka-server-start.sh /opt/kafka/config/kraft/server.properties
+      "
+    restart: unless-stopped
+
+  scylla:
+    image: scylladb/scylla:5.4.7
+    container_name: scylla
+    networks:
+      - app-net
+    ports:
+      - "9042:9042"
+      - "9160:9160"
+    command: --smp 1 --overprovisioned 1 --api-address 0.0.0.0
+    volumes:
+      - scylla/var/lib/scylla
+    restart: unless-stopped
+
+  auth-service:
+    build:
+      context: backend-chat/auth-service
+      dockerfile: Dockerfile
+    container_name: auth-service
+    networks:
+      - app-net
+    environment:
+      - DATABASE_URL=postgres://postgres:jj5x4H4!@auth-postgres:5432/auth_db
+      - REDIS_URL=redis://redis:6379
+      - JWT_ACCESS_SECRET=your-32-byte-secret-here-1234567890ab
+      - JWT_REFRESH_SECRET=another-32-byte-secret-here-0987654321cd
+    depends_on:
+      - postgres
+      - redis
+    restart: unless-stopped
+
+  chat-service:
+    build:
+      context: backend-chat/chat_news
+      dockerfile: Dockerfile
+    container_name: chat-service
+    networks:
+      - app-net
+    environment:
+      - DATABASE_URL=postgres://postgres:jj5x4H4!@auth-postgres:5432/auth_db
+      - KAFKA_BROKERS=kafka:9092
+      - KAFKA_CHAT_TOPIC=chat_messages
+      - KAFKA_NOTIF_TOPIC=notifications
+      - SCYLLA_NODES=scylla:9042
+      - SCYLLA_KEYSPACE=chat
+    depends_on:
+      - postgres
+      - kafka
+      - scylla
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./front-chat
+      dockerfile: Dockerfile
+    container_name: front-chat
+    networks:
+      - app-net
+    ports:
+      - "8080:80"
+    depends_on:
+      - auth-service
+      - chat-service
+    restart: unless-stopped
+
+volumes:
+  pg:
+  redis:
+  kafka:
+  scylla:
+
+networks:
+  app-net:
+    name: app-net
